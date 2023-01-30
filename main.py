@@ -1,15 +1,48 @@
 import os
 
 import discord
+from discord.ext import commands
 from dotenv import load_dotenv
+
+from api import getRandomMarketingPost
+import io
+import aiohttp
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+GUILD_ID = os.getenv('TEST_GUILD_ID')
 
-client = discord.Client(intents=discord.Intents.default())
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-@client.event
+
+@bot.event
 async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+    try:
+        print("Syncing command(s)...")
+        synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        print(f'Synced {len(synced)} command(s)!')
+    except Exception as e:
+        print(e)
+    print(f'{bot.user} has connected to Discord!')
 
-client.run(TOKEN)
+
+@bot.tree.command(guild=discord.Object(id=GUILD_ID), name="random-willow-motivation", description="Send a random motivational post!")
+async def sendRandomMotivation(int: discord.Interaction):
+    await sendPost(int, getRandomMarketingPost('Monday'))
+
+
+@bot.tree.command(guild=discord.Object(id=GUILD_ID), name="random-willow-meme", description="Send a random willow meme!")
+async def sendRandomMeme(int: discord.Interaction):
+    await sendPost(int, getRandomMarketingPost('Memes'))
+
+
+async def sendPost(int: discord.Interaction, randomPost):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(randomPost.get('link')) as resp:
+            if resp.status != 200:
+                return await int.response.send_message('Could not download file...')
+            data = io.BytesIO(await resp.read())
+            await int.response.send_message(file=discord.File(data, randomPost.get('label')))
+
+bot.run(TOKEN)
