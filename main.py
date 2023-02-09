@@ -37,6 +37,11 @@ async def sendRandomMeme(int: discord.Interaction):
     await sendPost(int, getRandomMarketingPost('Memes'))
 
 
+@bot.tree.command(guild=discord.Object(id=GUILD_ID), name="random-willow-post", description="Send a random willow post!")
+async def sendRandomMeme(int: discord.Interaction):
+    await sendPost(int, getRandomMarketingPost('Mascot'))
+
+
 async def sendPost(int: discord.Interaction, randomPost):
     async with aiohttp.ClientSession() as session:
         await int.response.defer()
