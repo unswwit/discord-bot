@@ -39,10 +39,11 @@ async def sendRandomMeme(int: discord.Interaction):
 
 async def sendPost(int: discord.Interaction, randomPost):
     async with aiohttp.ClientSession() as session:
+        await int.response.defer()
         async with session.get(randomPost.get('link')) as resp:
             if resp.status != 200:
-                return await int.response.send_message('Could not download file...')
+                return await int.followup.send('Could not download file...')
             data = io.BytesIO(await resp.read())
-            await int.response.send_message(file=discord.File(data, randomPost.get('label')))
+            await int.followup.send(file=discord.File(data, randomPost.get('label')))
 
 bot.run(TOKEN)
