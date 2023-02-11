@@ -1,15 +1,10 @@
-import os
 import discord
 from discord import app_commands
 from discord.ext import commands
-from dotenv import load_dotenv
 
 from api import getRandomMarketingPost
 import io
 import aiohttp
-
-load_dotenv()
-GUILD_ID = os.getenv('TEST_GUILD_ID')
 
 
 class sendRandomPostCog(commands.Cog):
@@ -41,4 +36,4 @@ async def sendPost(int: discord.Interaction, randomPost):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(sendRandomPostCog(bot), guild=discord.Object(id=GUILD_ID))
+    await bot.add_cog(sendRandomPostCog(bot))
