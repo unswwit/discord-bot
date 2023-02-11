@@ -1,15 +1,23 @@
 import os
 
 import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-client = discord.Client(intents=discord.Intents.default())
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-@client.event
-async def on_ready():
-    print(f'{client.user} has connected to Discord!')
 
-client.run(TOKEN)
+@bot.event
+async def setup_hook():
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py"):
+            await bot.load_extension(f'cogs.{filename[:-3]}')
+            print(f'{filename} has loaded!')
+
+    print(f'{bot.user} has connected to Discord!')
+
+bot.run(TOKEN)
