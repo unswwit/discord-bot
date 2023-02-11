@@ -27,7 +27,7 @@ git clone https://github.com/unswwit/discord-bot.git
 
 ```
 pip install -r requirements.txt
-python bot.js
+python3 main.py
 ```
 
 The bot should now be logged in and running in the test server.
