@@ -2,7 +2,7 @@ import os
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import Greedy, Context  # or a subclass of yours
+from discord.ext.commands import Greedy, Context
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,7 +28,7 @@ async def on_ready():
 
 @bot.command()
 @commands.guild_only()
-@commands.is_owner()
+@commands.has_permissions(administrator=True)
 async def sync(
         ctx: Context, guilds: Greedy[discord.Object], botName):
     if not guilds and botName == BOT_NAME:
