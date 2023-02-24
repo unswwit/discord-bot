@@ -21,3 +21,14 @@ def getRandomMarketingPost(category):
             posts.append(post)
 
     return random.choice(posts)
+
+
+def getNextUpcomingEvent():
+    upcomingEvents = client.entries(
+        {'content_type': 'upcomingEvents', 'limit': 1, 'order': 'fields.index'})
+    return upcomingEvents[0]
+
+
+def getUpcomingEvents():
+    return client.entries(
+        {'content_type': 'upcomingEvents', 'order': 'fields.index'})
