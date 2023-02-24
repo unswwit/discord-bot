@@ -32,3 +32,9 @@ def getNextUpcomingEvent():
 def getUpcomingEvents():
     return client.entries(
         {'content_type': 'upcomingEvents', 'order': 'fields.index'})
+
+
+def getMostRecentEvent():
+    pastEvents = client.entries(
+        {'content_type': 'pastEvents', 'limit': 1, 'order': '-fields.index'})
+    return pastEvents[0]
