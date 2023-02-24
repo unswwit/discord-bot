@@ -20,11 +20,4 @@ def getRandomMarketingPost(category):
         if post.fields().get('img') != None:
             posts.append(post)
 
-    post = random.choice(posts)
-    postLabel = post.fields().get('label').replace(' ', '-') + '.png'
-    postLink = 'https:' + post.fields().get('img').url()
-
-    return {
-        'label': postLabel,
-        'link': postLink,
-    }
+    return random.choice(posts)
