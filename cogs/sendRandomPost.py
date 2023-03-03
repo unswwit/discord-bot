@@ -6,7 +6,7 @@ import io
 import aiohttp
 
 
-class sendRandomPostCog(commands.Cog):
+class sendRandomPostCog(commands.Cog, name="Send random post commands"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 

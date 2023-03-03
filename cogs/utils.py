@@ -1,16 +1,13 @@
 import discord
 from discord.ext import commands
 
-
 class helpCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
+        bot.help_command = sendHelpCommand()
 
-        help_command = sendHelpCommand()
-        help_command.cog = self
-        bot.help_command = help_command
 
-class sendHelpCommand(commands.MinimalHelpCommand):
+class sendHelpCommand(commands.HelpCommand):
     async def send_error_message(self, error):
         embed = discord.Embed(title="Error", description=error)
         channel = self.get_destination()
@@ -18,9 +15,12 @@ class sendHelpCommand(commands.MinimalHelpCommand):
 
     async def send_bot_help(self, mapping):
         embed = discord.Embed(
-            title="Help Command", description="Type `/help command` for more info on a command.\nYou can also type `/help category` for more info on a category.", color=0xFEB14B
+            title="Help Command", color=0xFEB14B
         )
         for cog, commands in mapping.items():
+            # skip commands not in a cog/category
+            if cog is None:
+                continue
             filtered = await self.filter_commands(commands, sort=True)
             command_signatures = [
                 self.get_command_signature(c) for c in filtered]
@@ -28,12 +28,12 @@ class sendHelpCommand(commands.MinimalHelpCommand):
                 cog_name = getattr(cog, "qualified_name", "No Category")
                 embed.add_field(name=cog_name, value="\n".join(
                     command_signatures), inline=False)
-
+                embed.set_footer(
+                    text="Type /help command for more info on a command.")
         channel = self.get_destination()
         await channel.send(embed=embed)
 
-# TODO: implement pagination when we get more commands
-# TODO: figure out how to remove duplicate help command
 
 async def setup(bot):
+    bot.remove_command('help')
     await bot.add_cog(helpCog(bot))

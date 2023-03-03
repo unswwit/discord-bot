@@ -11,7 +11,7 @@ BOT_NAME = os.getenv('DISCORD_BOT_NAME')
 
 intents = discord.Intents.all()
 
-bot = commands.Bot(command_prefix='/', intents=intents, help_command = None)
+bot = commands.Bot(command_prefix='/', intents=intents)
 
 @bot.event
 async def setup_hook():
