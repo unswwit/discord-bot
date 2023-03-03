@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+
 class helpCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -10,6 +11,12 @@ class helpCog(commands.Cog):
 class sendHelpCommand(commands.HelpCommand):
     async def send_error_message(self, error):
         embed = discord.Embed(title="Error", description=error)
+        channel = self.get_destination()
+        await channel.send(embed=embed)
+
+    async def send_command_help(self, command):
+        embed = discord.Embed(title=self.get_command_signature(
+            command), description=command.help, color=0xFEB14B)
         channel = self.get_destination()
         await channel.send(embed=embed)
 
