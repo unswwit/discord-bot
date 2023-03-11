@@ -20,11 +20,21 @@ def getRandomMarketingPost(category):
         if post.fields().get('img') != None:
             posts.append(post)
 
-    post = random.choice(posts)
-    postLabel = post.fields().get('label').replace(' ', '-') + '.png'
-    postLink = 'https:' + post.fields().get('img').url()
+    return random.choice(posts)
 
-    return {
-        'label': postLabel,
-        'link': postLink,
-    }
+
+def getNextUpcomingEvent():
+    upcomingEvents = client.entries(
+        {'content_type': 'upcomingEvents', 'limit': 1, 'order': 'fields.index'})
+    return upcomingEvents[0]
+
+
+def getUpcomingEvents():
+    return client.entries(
+        {'content_type': 'upcomingEvents', 'order': 'fields.index'})
+
+
+def getMostRecentEvent():
+    pastEvents = client.entries(
+        {'content_type': 'pastEvents', 'limit': 1, 'order': '-fields.index'})
+    return pastEvents[0]
