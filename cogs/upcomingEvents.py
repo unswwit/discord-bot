@@ -4,6 +4,8 @@ from discord.ext import commands
 
 from api import getNextUpcomingEvent, getUpcomingEvents, getMostRecentEvent
 
+EVENT_RECAPS_LINK = 'https://unswwit.com/events/event-recaps/'
+
 
 class upcomingEventsCog(commands.Cog):
 
@@ -33,7 +35,7 @@ class upcomingEventsCog(commands.Cog):
 
 async def noEventsMessage(int: discord.Interaction):
     recentEventFields = getMostRecentEvent().fields()
-    return await int.response.send_message(f"Unfortunately WIT has no upcoming events for now! Keep an eye out on our socials for new events every term 🧡\n\n**Most Recent Event**\n{recentEventFields.get('title')}: https://unswwit.com/events/event-recaps/{recentEventFields.get('year')}/{recentEventFields.get('event_number')}")
+    return await int.response.send_message(f"Unfortunately WIT has no upcoming events for now! Keep an eye out on our socials for new events every term 🧡\n\n**Most Recent Event**\n{recentEventFields.get('title')}: {EVENT_RECAPS_LINK}{recentEventFields.get('year')}/{recentEventFields.get('event_number')}")
 
 
 async def setup(bot: commands.Bot):
