@@ -1,5 +1,4 @@
 import discord
-from discord import app_commands
 from discord.ext import commands
 
 from api import getRandomMarketingPost
@@ -7,20 +6,19 @@ import io
 import aiohttp
 
 
-class sendRandomPostCog(commands.Cog):
-
+class sendRandomPostCog(commands.Cog, name="Send random post commands"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="random-willow-motivation", description="Send a random motivational post!")
+    @commands.command(name="random-willow-motivation", help="Send a random motivational post!")
     async def sendRandomMotivation(self, int: discord.Interaction):
         await sendPost(int, getRandomMarketingPost('Monday'))
 
-    @app_commands.command(name="random-willow-meme", description="Send a random willow meme!")
+    @commands.command(name="random-willow-meme", help="Send a random willow meme!")
     async def sendRandomMeme(self, int: discord.Interaction):
         await sendPost(int, getRandomMarketingPost('Memes'))
 
-    @app_commands.command(name="random-willow-post", description="Send a random willow post!")
+    @commands.command(name="random-willow-post", help="Send a random willow post!")
     async def sendRandomWillow(self, int: discord.Interaction):
         await sendPost(int, getRandomMarketingPost('Mascot'))
 
