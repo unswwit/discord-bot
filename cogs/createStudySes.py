@@ -21,5 +21,5 @@ class Buttons(commands.Cog):
         await ctx.send("Are you going or not?", view=view)
 
 
-def setup(bot):
+async def setup(bot):
     bot.add_cog(Buttons(bot))
