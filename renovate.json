@@ -2,5 +2,27 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "lockFileMaintenance": { "enabled": true, "automerge": true },
+  "prHourlyLimit": 5,
+  "labels": ["dependencies"],
+  "baseBranches": ["main"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": true,
+      "matchPackageNames": ["discord.py"],
+      "groupName": "python deps"
+    },
+    {
+      "matchUpdateTypes": ["patch"],
+      "groupName": "weekly patch updates",
+      "schedule": ["before 5am every monday"]
+    }
   ]
 }
