@@ -77,10 +77,11 @@ class createStudySes(commands.Cog):
     #     self.attendees.append(user)
     #     print(f"Added attendee: {', '.join(self.attendees)}")
 
-    def add_attendee(self, user: discord.User):
+    async def add_attendee(self, inter: discord.Interaction, user: discord.User):
         self.attendees.append(user.display_name)
         # gets rid of duplicates
         # self.attendees = list(set(self.attendees))
+        await inter.response.send_message("clicked")
 
     def get_attendees_list(self):
         attendees_list = "\n".join(
@@ -93,13 +94,18 @@ class MyView(discord.ui.View):
         super().__init__()
         self.callback = callback
 
-        self.add_item(Button(style=discord.ButtonStyle.green,
-                      label="Going", custom_id="going"))
-        self.add_item(Button(style=discord.ButtonStyle.red,
-                      label="Not Going", custom_id="not_going"))
+        # self.add_item(Button(style=discord.ButtonStyle.green,
+        #               label="Going", custom_id="going"))
+        # self.add_item(Button(style=discord.ButtonStyle.red,
+        #               label="Not Going", custom_id="not_going"))
 
-    async def on_button_click(self, button: discord.ui.Button, inter: discord.Interaction):
-        await self.callback(inter, button)
+    @discord.ui.button(style=discord.ButtonStyle.green, label="Going")
+    async def going(self,  inter: discord.Interaction, button: discord.ui.Button):
+        await self.callback(inter, inter.user)
+
+    @discord.ui.button(style=discord.ButtonStyle.red, label="Not Going")
+    async def not_going(self,  inter: discord.Interaction, button: discord.ui.Button):
+        await self.callback(inter, inter.user)
 
 
 # class MyView(discord.ui.View):
