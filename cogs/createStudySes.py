@@ -9,24 +9,34 @@ from discord.ext.commands import Context
 class createStudySes(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.attendees = []  # initialize an empty list of attendees
+        self.attendees = []  # initialize an empty list of attendees    
+        self.message_content = ""
 
     @app_commands.command(name="create-study-session", description="Create a study session with members")
     async def create_study_session(self, inter: discord.Interaction, date: str, start_time: str, end_time: str):
         username = inter.user.name
-        message_content = f"**Study Session!\n\n{username}** is having a study session for **{date} from {start_time} to {end_time}** in the WIT Discord Server! Click the buttons below to RSVP.\n\n**Attendees ({len(self.attendees) + 1}):**\n{username}\n{self.get_attendees_list()}"
-        embed = discord.Embed(description=message_content,
+        self.message_content = f"""
+        **Study Session!\n\n{username}** is having a study session for **{date} from {start_time} to {end_time}** in the WIT Discord Server! Click the buttons below to RSVP.\n\n
+        """
+        attendees_list = f"""**Attendees ({len(self.attendees)}):**\n\n{self.get_attendees_list()}
+        """
+        embed = discord.Embed(description=attendees_list,
                               color=discord.Color.blue())
-        view = MyView(self.add_attendee, username)
-        await inter.response.send_message(embed=embed, view=view)
+        view = MyView(self.add_attendee, inter.user.name)
+        await inter.response.send_message(content=self.message_content, embed=embed, view=view)
 
     async def add_attendee(self, inter: discord.Interaction, user: discord.User):
         self.attendees.append(user.display_name)
-        await inter.response.send_message(f"{user.display_name} has RSVP'd to the study session!")
+        embed = discord.Embed(color=discord.Color.blue())
+        embed.description = f"""**Attendees ({len(self.attendees)}):**\n\n{self.get_attendees_list()}
+        """
+        await inter.response.edit_message(embed=embed)
+        # await inter.response.send_message(f"{user.display_name} has RSVP'd to the study session!")
 
+        
     def get_attendees_list(self):
         attendees_list = "\n".join(
-            f"- {attendee.name}" for attendee in self.attendees)
+            f"- {attendee}" for attendee in self.attendees)
         return attendees_list
 
 
