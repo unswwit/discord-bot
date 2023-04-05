@@ -3,9 +3,11 @@ from discord import app_commands
 from discord.ext import commands
 import random_topic
 
+
 class randomTopicCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
     # user types/random_topic and the command will be executed
     @app_commands.command(name="random-topic")
     async def random_topic_command(self, int: discord.Interaction):
