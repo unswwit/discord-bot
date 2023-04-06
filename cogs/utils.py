@@ -22,7 +22,7 @@ class sendHelpCommand(commands.HelpCommand):
 
     async def send_bot_help(self, mapping):
         embed = discord.Embed(
-            title="Help Command", color=0xFEB14B
+            title="WillowBot Help", color=0xFEB14B
         )
         for cog, commands in mapping.items():
             # skip commands not in a cog/category
@@ -36,7 +36,7 @@ class sendHelpCommand(commands.HelpCommand):
                 embed.add_field(name=cog_name, value="\n".join(
                     command_signatures), inline=False)
                 embed.set_footer(
-                    text="Type /help command for more info on a command.")
+                    text="Type /help command for more info on a command (e.g. /help random-willow-meme)")
         channel = self.get_destination()
         await channel.send(embed=embed)
 
