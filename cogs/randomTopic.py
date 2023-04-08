@@ -9,7 +9,9 @@ class randomTopicCog(commands.Cog):
         self.bot = bot
 
     # user types/random_topic and the command will be executed
-    @app_commands.command(name="random-topic")
+    @app_commands.command(
+            name="random-topic", description="Send a random conversation topic!"
+    )
     async def random_topic_command(self, int: discord.Interaction):
         # generates a random topic from random_topic module and saves it to a variable called topic
         topic = random_topic.get_topic()
