@@ -26,7 +26,7 @@ async def setup_hook():
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
 
-    watcher = Watcher(bot, path='cogs', preload=True) # hot reloading for cogs
+    watcher = Watcher(bot, path="cogs", preload=True) # hot reloading for cogs
     await watcher.start()
 
 
