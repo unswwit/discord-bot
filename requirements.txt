@@ -11,3 +11,6 @@ multidict==6.0.3
 yarl==1.8.2
 contentful==2.1.1
 python-dotenv==1.0.0
+random-topic==0.1.2
+html5lib==1.1
+bs4==0.0.1
