@@ -9,7 +9,7 @@ class randomTopicCog(commands.Cog):
         self.bot = bot
 
     @app_commands.command(
-            name="random-topic", description="Send a random conversation topic!"
+        name="random-topic", description="Send a random conversation topic!"
     )
     # user types '/random_topic' and the command will be executed
     async def random_topic_command(self, int: discord.Interaction):
