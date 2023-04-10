@@ -11,3 +11,4 @@ multidict==6.0.3
 yarl==1.8.2
 contentful==2.1.1
 python-dotenv==1.0.0
+cogwatch==3.3.1
