@@ -32,7 +32,7 @@ async def on_ready():
 
 @bot.command()
 @commands.guild_only()
-@commands.has_permissions(administrator=True)
+@commands.is_owner()
 async def sync(ctx: Context, guilds: Greedy[discord.Object], botName):
     if not guilds and botName == BOT_NAME:
         print("Syncing command(s)...")
