@@ -67,5 +67,6 @@ class MyView(discord.ui.View):
         )
         await inter.response.edit_message(embed=embed)
 
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(createStudySessionCog(bot))
