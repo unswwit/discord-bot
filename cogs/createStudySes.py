@@ -22,16 +22,23 @@ class createStudySes(commands.Cog):
         """
         embed = discord.Embed(description=attendees_list,
                               color=discord.Color.blue())
-        view = MyView(self.add_attendee, inter.user.name)
+        view = MyView(self.add_attendee, self.remove_attendee)
         await inter.response.send_message(content=self.message_content, embed=embed, view=view)
 
     async def add_attendee(self, inter: discord.Interaction, user: discord.User):
-        self.attendees.append(user.display_name)
+        if user.display_name not in self.attendees:
+            self.attendees.append(user.display_name)
         embed = discord.Embed(color=discord.Color.blue())
         embed.description = f"""**Attendees ({len(self.attendees)}):**\n\n{self.get_attendees_list()}
         """
         await inter.response.edit_message(embed=embed)
-        # await inter.response.send_message(f"{user.display_name} has RSVP'd to the study session!")
+    
+    async def remove_attendee(self, inter: discord.Interaction, user: discord.User):
+        self.attendees.remove(user.display_name)
+        embed = discord.Embed(color=discord.Color.blue())
+        embed.description = f"""**Attendees ({len(self.attendees)}):**\n\n{self.get_attendees_list()}
+        """
+        await inter.response.edit_message(embed=embed)
 
         
     def get_attendees_list(self):
@@ -41,23 +48,24 @@ class createStudySes(commands.Cog):
 
 
 class MyView(discord.ui.View):
-    def __init__(self, callback, username):
+    def __init__(self, callback_add, callback_remove):
         super().__init__()
-        self.callback = callback
+        self.callback_add = callback_add
+        self.callback_remove = callback_remove
         self.going_users = []  # initialize an empty list for going users
         self.attendees_list = discord.ui.Button(label="Attendees", disabled=True)
 
 
     @discord.ui.button(style=discord.ButtonStyle.green, label="Going")
     async def going(self,  inter: discord.Interaction, button: discord.ui.Button):
-        await self.callback(inter, inter.user)
+        await self.callback_add(inter, inter.user)
 
     @discord.ui.button(style=discord.ButtonStyle.red, label="Not Going")
     async def not_going(self,  inter: discord.Interaction, button: discord.ui.Button):
-        await self.callback(inter, inter.user)
+        await self.callback_remove(inter, inter.user)
 
-        going_usernames = [f"<@{user_id}>" for user_id in self.going_users]
-        self.attendees_list.label = "\n".join(going_usernames)
+        # going_usernames = [f"<@{user_id}>" for user_id in self.going_users]
+        # self.attendees_list.label = "\n".join(going_usernames)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(createStudySes(bot))
