@@ -8,3 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: psf/black@stable
+      - name: Check and fix linting issues
+        run: |
+          black --check --diff .
+          black --quiet .
