@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Greedy, Context
 from dotenv import load_dotenv
+from cogwatch import Watcher
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
@@ -25,10 +26,13 @@ async def setup_hook():
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
 
+    watcher = Watcher(bot, path="cogs", preload=True)  # hot reloading for cogs
+    await watcher.start()
+
 
 @bot.command()
 @commands.guild_only()
-@commands.has_permissions(administrator=True)
+@commands.is_owner()
 async def sync(ctx: Context, guilds: Greedy[discord.Object], botName):
     if not guilds and botName == BOT_NAME:
         print("Syncing command(s)...")
