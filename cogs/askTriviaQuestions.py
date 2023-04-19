@@ -28,8 +28,8 @@ class asksTriviaQuestionCog(commands.Cog):
             color=discord.Color.orange(),
         )
 
-        for answers in incorrectAnswers and correctAnswer:
-            view = MyView(id, answers)
+        for incorrectAnswer in incorrectAnswers:
+            view = MyView(id, incorrectAnswer, correctAnswer)
 
         await inter.response.send_message(
             content=f"Trivia Question!", embed=embed, view=view
@@ -37,39 +37,46 @@ class asksTriviaQuestionCog(commands.Cog):
 
 
 class MyView(discord.ui.View):
-    def __init__(self, creatorId, answers):
+    def __init__(self, creatorId, incorrectAnswer, correctAnswer):
         super().__init__(timeout=None)
-        self.answers = {answers}  # initialize set of answers
+        # initialize set of answers
+        self.answers = {incorrectAnswer, correctAnswer}
 
-    @discord.ui.button(style=discord.ButtonStyle.green, label=self.answers)
-    async def going(self, inter: discord.Interaction, button: discord.ui.Button):
-        if self.answers == correctAnswer
-            await self.updateMessageCorrect(inter)
-        else:
-            await self.updateMessageIncorrect(inter)
+    @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
+    async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
+        await self.updateMessageCorrect(inter)
+
+    @discord.ui.button(style=discord.ButtonStyle.red, label="".join(incorrectAnswer))
+    async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
+        await self.updateMessageIncorrect(inter)
+
+    def __init__(self, creatorId, incorrectAnswer, correctAnswer):
+        super().__init__(timeout=None)
+        # initialize set of answers
+        self.answers = {incorrectAnswer, correctAnswer}
+
+    @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
+    async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
+        await self.updateMessageCorrect(inter)
+
+    @discord.ui.button(style=discord.ButtonStyle.red, label=incorrectAnswer)
+    async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
+        await self.updateMessageIncorrect(inter)
 
     async def updateMessageCorrect(self, inter: discord.Interaction):
-        attendeesList = "\n".join(
-            f"- <@{attendee}>" for attendee in self.attendees)
 
         embed = discord.Embed(
-            title=f"Attendees ({len(self.attendees)}):",
-            color=discord.Color.orange(),
-            description=f"\n\n{attendeesList}",
+
         )
         await inter.response.edit_message(embed=embed)
-    
+
     async def updateMessageIncorrect(self, inter: discord.Interaction):
-        attendeesList = "\n".join(
-            f"- <@{attendee}>" for attendee in self.attendees)
 
         embed = discord.Embed(
-            title=f"Attendees ({len(self.attendees)}):",
-            color=discord.Color.orange(),
-            description=f"\n\n{attendeesList}",
+
         )
         await inter.response.edit_message(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(createStudySessionCog(bot))
+    await bot.add_cog(asksTriviaQuestionCog(bot))
