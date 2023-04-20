@@ -16,8 +16,8 @@ class createStudySessionCog(commands.Cog):
     )
     @app_commands.describe(
         date="The date of your study session, formatted as YYYY-MM-DD. (e.g. 2023-04-10)",
-        start_time="The starting time of your study session, formatted as HH:MM. (e.g. 13:30)",
-        end_time="The ending time of your study session, formatted as HH:MM. (e.g. 14:30)",
+        start_time="The starting time of your study session in Sydney time, formatted as HH:MM. (e.g. 13:30)",
+        end_time="The ending time of your study session in Sydney time, formatted as HH:MM. (e.g. 14:30)",
     )
     async def create_study_session(
         self, inter: discord.Interaction, date: str, start_time: str, end_time: str
@@ -30,7 +30,7 @@ class createStudySessionCog(commands.Cog):
         except ValueError:
             # send ephemeral error message for incorrect input formatting
             await inter.response.send_message(
-                f"**Error: Invalid input format!**\nI couldn't schedule your study session because of some incorrect formatting. See below for details:\n\n**Correct formats:**\ndate: YYYY-MM-DD\nstart_time: HH:MM\nend_time: HH:MM\n\n**You entered:**\ndate: {date}\nstart_time: {start_time}\nend_time: {end_time}",
+                f"**Error: Invalid input format!**\nI couldn't schedule your study session because of some incorrect formatting. See below for details:\n\n**Correct formats:**\ndate: YYYY-MM-DD\nstart_time: HH:MM in Sydney time\nend_time: HH:MM in Sydney time\n\n**You entered:**\ndate: {date}\nstart_time: {start_time}\nend_time: {end_time}",
                 ephemeral=True
             )
             return
