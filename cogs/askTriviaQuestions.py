@@ -10,30 +10,33 @@ class asksTriviaQuestionCog(commands.Cog):
         self.bot = bot
 
     @app_commands.command(
-        # TODO
+        name="ask-trivia-questions",
+        description="Asks trivia questions!",
 
     )
+
+
     async def asksTriviaQuestion(self, inter: discord.Interaction):
         trivia = await trivia.question(amount=1, category=0, quizType='multiple')
-        question = trivia['question'],
-        difficulty = trivia['difficulty'],
-        correctAnswer = trivia['correct_answer'],
-        incorrectAnswers = trivia['incorrect_answers'],
-        # incorrectGuesses = [];
-        id = inter.user.id
+        # question = trivia['question'],
+        # difficulty = trivia['difficulty'],
+        # correctAnswer = trivia['correct_answer'],
+        # incorrectAnswers = trivia['incorrect_answers'],
+        # # incorrectGuesses = [];
+        # id = inter.user.id
 
-        embed = discord.Embed(
-            # title=f"Trivia Question!",
-            description=f"{question} \n {difficulty} \n {correctAnswer} \n {incorrectAnswers}",
-            color=discord.Color.orange(),
-        )
+        # embed = discord.Embed(
+        #     # title=f"Trivia Question!",
+        #     description=f"{question} \n {difficulty} \n {correctAnswer} \n {incorrectAnswers}",
+        #     color=discord.Color.orange(),
+        # )
 
-        for incorrectAnswer in incorrectAnswers:
-            view = MyView(id, incorrectAnswer, correctAnswer)
+        # for incorrectAnswer in incorrectAnswers:
+        #     view = MyView(id, incorrectAnswer, correctAnswer)
 
-        await inter.response.send_message(
-            content=f"Trivia Question!", embed=embed, view=view
-        )
+        # await inter.response.send_message(
+        #     content=f"Trivia Question!", embed=embed, view=view
+        # )
 
 
 class MyView(discord.ui.View):
@@ -80,3 +83,4 @@ class MyView(discord.ui.View):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(asksTriviaQuestionCog(bot))
+
