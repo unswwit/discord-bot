@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-import time
 import math
+import datetime as dt
+from zoneinfo import ZoneInfo
 
 
 class createStudySessionCog(commands.Cog):
@@ -21,13 +22,25 @@ class createStudySessionCog(commands.Cog):
     async def create_study_session(
         self, inter: discord.Interaction, date: str, start_time: str, end_time: str
     ):
+        timezone = ZoneInfo("Australia/Sydney")
+        dateFormat = "%Y-%m-%d %H:%M"
+        try:
+            startTime = dt.datetime.strptime(f"{date} {start_time}", dateFormat).replace(tzinfo=timezone)
+            endTime = dt.datetime.strptime(f"{date} {end_time}", dateFormat).replace(tzinfo=timezone)
+        except ValueError:
+            # send ephemeral error message for incorrect input formatting
+            await inter.response.send_message(
+                f"**Error: Invalid input format!**\nI couldn't schedule your study session because of some incorrect formatting. See below for details:\n\n**Correct formats:**\ndate: YYYY-MM-DD\nstart_time: HH:MM\nend_time: HH:MM\n\n**You entered:**\ndate: {date}\nstart_time: {start_time}\nend_time: {end_time}",
+                ephemeral=True
+            )
+            return
+
         # Discord timestamp formatting
-        startUnix = time.mktime(time.strptime(f"{date} {start_time}", "%Y-%m-%d %H:%M"))
-        startString = f"<t:{math.floor(startUnix)}:F>"
-        endUnix = time.mktime(time.strptime(f"{date} {end_time}", "%Y-%m-%d %H:%M"))
-        endString = f"<t:{math.floor(endUnix)}:t>"
+        startString = f"<t:{math.floor(startTime.timestamp())}:F>"
+        endString = f"<t:{math.floor(endTime.timestamp())}:t>"
 
         id = inter.user.id
+
         messageContent = f"""
         **🧡 Study Session! 🧡**\n\n<@{id}> is having a study session on {startString} until {endString} in the WIT Discord Server!\n\nClick the buttons below to RSVP.\n\n
         """
