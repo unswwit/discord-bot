@@ -18,13 +18,13 @@ class sendRandomPostCog(commands.Cog):
         await sendPost(int, getRandomMarketingPost("Monday"))
 
     @app_commands.command(
-        name="random-willow-meme", description="Send a random willow meme!"
+        name="random-willow-meme", description="Send a random Willow meme!"
     )
     async def sendRandomMeme(self, int: discord.Interaction):
         await sendPost(int, getRandomMarketingPost("Memes"))
 
     @app_commands.command(
-        name="random-willow-post", description="Send a random willow post!"
+        name="random-willow-post", description="Send a random Willow post!"
     )
     async def sendRandomWillow(self, int: discord.Interaction):
         await sendPost(int, getRandomMarketingPost("Mascot"))
