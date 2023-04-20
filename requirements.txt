@@ -15,3 +15,4 @@ cogwatch==3.3.1
 random-topic==0.1.2
 html5lib==1.1
 bs4==0.0.1
+tzdata==2023.3
