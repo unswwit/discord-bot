@@ -25,13 +25,17 @@ class createStudySessionCog(commands.Cog):
         timezone = ZoneInfo("Australia/Sydney")
         dateFormat = "%Y-%m-%d %H:%M"
         try:
-            startTime = dt.datetime.strptime(f"{date} {start_time}", dateFormat).replace(tzinfo=timezone)
-            endTime = dt.datetime.strptime(f"{date} {end_time}", dateFormat).replace(tzinfo=timezone)
+            startTime = dt.datetime.strptime(
+                f"{date} {start_time}", dateFormat
+            ).replace(tzinfo=timezone)
+            endTime = dt.datetime.strptime(
+                f"{date} {end_time}", dateFormat
+            ).replace(tzinfo=timezone)
         except ValueError:
             # send ephemeral error message for incorrect input formatting
             await inter.response.send_message(
                 f"**Error: Invalid input format!**\nI couldn't schedule your study session because of some incorrect formatting. See below for details:\n\n**Correct formats:**\ndate: YYYY-MM-DD\nstart_time: HH:MM in Sydney time\nend_time: HH:MM in Sydney time\n\n**You entered:**\ndate: {date}\nstart_time: {start_time}\nend_time: {end_time}",
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
@@ -51,7 +55,7 @@ class createStudySessionCog(commands.Cog):
         )
         view = MyView(id)
         await inter.response.send_message(
-            content=messageContent, embed=embed, view=view
+            content=messageContent, embed=embed, view=view,
         )
 
 
