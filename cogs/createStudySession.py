@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-import time
 import math
+import datetime as dt
+from zoneinfo import ZoneInfo
 
 
 class createStudySessionCog(commands.Cog):
@@ -15,19 +16,35 @@ class createStudySessionCog(commands.Cog):
     )
     @app_commands.describe(
         date="The date of your study session, formatted as YYYY-MM-DD. (e.g. 2023-04-10)",
-        start_time="The starting time of your study session, formatted as HH:MM. (e.g. 13:30)",
-        end_time="The ending time of your study session, formatted as HH:MM. (e.g. 14:30)",
+        start_time="The starting time of your study session in Sydney time, formatted as HH:MM. (e.g. 13:30)",
+        end_time="The ending time of your study session in Sydney time, formatted as HH:MM. (e.g. 14:30)",
     )
     async def create_study_session(
         self, inter: discord.Interaction, date: str, start_time: str, end_time: str
     ):
+        timezone = ZoneInfo("Australia/Sydney")
+        dateFormat = "%Y-%m-%d %H:%M"
+        try:
+            startTime = dt.datetime.strptime(
+                f"{date} {start_time}", dateFormat
+            ).replace(tzinfo=timezone)
+            endTime = dt.datetime.strptime(f"{date} {end_time}", dateFormat).replace(
+                tzinfo=timezone
+            )
+        except ValueError:
+            # send ephemeral error message for incorrect input formatting
+            await inter.response.send_message(
+                f"**Error: Invalid input format!**\nI couldn't schedule your study session because of some incorrect formatting. See below for details:\n\n**Correct formats:**\ndate: YYYY-MM-DD\nstart_time: HH:MM in Sydney time\nend_time: HH:MM in Sydney time\n\n**You entered:**\ndate: {date}\nstart_time: {start_time}\nend_time: {end_time}",
+                ephemeral=True,
+            )
+            return
+
         # Discord timestamp formatting
-        startUnix = time.mktime(time.strptime(f"{date} {start_time}", "%Y-%m-%d %H:%M"))
-        startString = f"<t:{math.floor(startUnix)}:F>"
-        endUnix = time.mktime(time.strptime(f"{date} {end_time}", "%Y-%m-%d %H:%M"))
-        endString = f"<t:{math.floor(endUnix)}:t>"
+        startString = f"<t:{math.floor(startTime.timestamp())}:F>"
+        endString = f"<t:{math.floor(endTime.timestamp())}:t>"
 
         id = inter.user.id
+
         messageContent = f"""
         **🧡 Study Session! 🧡**\n\n<@{id}> is having a study session on {startString} until {endString} in the WIT Discord Server!\n\nClick the buttons below to RSVP.\n\n
         """
@@ -38,7 +55,9 @@ class createStudySessionCog(commands.Cog):
         )
         view = MyView(id)
         await inter.response.send_message(
-            content=messageContent, embed=embed, view=view
+            content=messageContent,
+            embed=embed,
+            view=view,
         )
 
 
