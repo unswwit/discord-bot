@@ -28,9 +28,9 @@ class createStudySessionCog(commands.Cog):
             startTime = dt.datetime.strptime(
                 f"{date} {start_time}", dateFormat
             ).replace(tzinfo=timezone)
-            endTime = dt.datetime.strptime(
-                f"{date} {end_time}", dateFormat
-            ).replace(tzinfo=timezone)
+            endTime = dt.datetime.strptime(f"{date} {end_time}", dateFormat).replace(
+                tzinfo=timezone
+            )
         except ValueError:
             # send ephemeral error message for incorrect input formatting
             await inter.response.send_message(
@@ -55,7 +55,9 @@ class createStudySessionCog(commands.Cog):
         )
         view = MyView(id)
         await inter.response.send_message(
-            content=messageContent, embed=embed, view=view,
+            content=messageContent,
+            embed=embed,
+            view=view,
         )
 
 
