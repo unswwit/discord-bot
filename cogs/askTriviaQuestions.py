@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from trivia import trivia
-import asyncio
+from pyopentdb import OpenTDBClient, Category, QuestionType, Difficulty
+
 
 
 class asksTriviaQuestionCog(commands.Cog):
@@ -11,74 +11,80 @@ class asksTriviaQuestionCog(commands.Cog):
 
     @app_commands.command(
         name="ask-trivia-questions",
-        description="Asks trivia questions!",
-
+        description="Asks trivia questions!"
     )
 
-
     async def asksTriviaQuestion(self, inter: discord.Interaction):
-        trivia = await trivia.question(amount=1, category=0, quizType='multiple')
-        # question = trivia['question'],
-        # difficulty = trivia['difficulty'],
-        # correctAnswer = trivia['correct_answer'],
-        # incorrectAnswers = trivia['incorrect_answers'],
-        # # incorrectGuesses = [];
-        # id = inter.user.id
+        # Create a client to retrieve 1 "General Knowledge" question with "medium" difficulty
+        client = OpenTDBClient()
+        questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.MEDIUM)
+    
+        questionTxt = questionSet.items[0].question
+        questionDiff = questionSet.items[0].difficulty.name.title()
+        # answerChoices = '\n'.join(questionList[0].choices)
 
-        # embed = discord.Embed(
-        #     # title=f"Trivia Question!",
-        #     description=f"{question} \n {difficulty} \n {correctAnswer} \n {incorrectAnswers}",
-        #     color=discord.Color.orange(),
-        # )
+        embed = discord.Embed(
+            # title=f"Trivia Question!",
+            description=f"Question: {questionTxt} \n\n\n Difficulty: {questionDiff}",
+            color=discord.Color.orange(),
+        )
+
+        print(questionSet)
+
+        # view = MyView(id)
+        await inter.response.send_message(
+            content=f"Trivia Question!", embed=embed
+        )
+
+        # Send the question as a message
+        # await ctx.send(question.question)
+
 
         # for incorrectAnswer in incorrectAnswers:
         #     view = MyView(id, incorrectAnswer, correctAnswer)
 
-        # await inter.response.send_message(
-        #     content=f"Trivia Question!", embed=embed, view=view
-        # )
 
 
-class MyView(discord.ui.View):
-    def __init__(self, creatorId, incorrectAnswer, correctAnswer):
-        super().__init__(timeout=None)
-        # initialize set of answers
-        self.answers = {incorrectAnswer, correctAnswer}
+# class MyView(discord.ui.View):
+#     def __init__(self, creatorId, incorrectAnswer, correctAnswer):
+#         super().__init__(timeout=None)
+#         # initialize set of answers
+#         self.answers = {incorrectAnswer, correctAnswer}
 
-    @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
-    async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageCorrect(inter)
+#     @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
+#     async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
+#         await self.updateMessageCorrect(inter)
 
-    @discord.ui.button(style=discord.ButtonStyle.red, label="".join(incorrectAnswer))
-    async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageIncorrect(inter)
+#     @discord.ui.button(style=discord.ButtonStyle.red, label="".join(incorrectAnswer))
+#     async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
+#         await self.updateMessageIncorrect(inter)
 
-    def __init__(self, creatorId, incorrectAnswer, correctAnswer):
-        super().__init__(timeout=None)
-        # initialize set of answers
-        self.answers = {incorrectAnswer, correctAnswer}
+#     def __init__(self, creatorId, incorrectAnswer, correctAnswer):
+#         super().__init__(timeout=None)
+#         # initialize set of answers
+#         self.answers = {incorrectAnswer, correctAnswer}
 
-    @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
-    async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageCorrect(inter)
+#     @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
+#     async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
+#         await self.updateMessageCorrect(inter)
 
-    @discord.ui.button(style=discord.ButtonStyle.red, label=incorrectAnswer)
-    async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageIncorrect(inter)
+#     @discord.ui.button(style=discord.ButtonStyle.red, label=incorrectAnswer)
+#     async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
+#         await self.updateMessageIncorrect(inter)
 
-    async def updateMessageCorrect(self, inter: discord.Interaction):
+#     async def updateMessageCorrect(self, inter: discord.Interaction):
 
-        embed = discord.Embed(
+#         embed = discord.Embed(
 
-        )
-        await inter.response.edit_message(embed=embed)
+#         )
+#         await inter.response.edit_message(embed=embed)
 
-    async def updateMessageIncorrect(self, inter: discord.Interaction):
+#     async def updateMessageIncorrect(self, inter: discord.Interaction):
 
-        embed = discord.Embed(
+#         embed = discord.Embed(
 
-        )
-        await inter.response.edit_message(embed=embed)
+#         )
+#         await inter.response.edit_message(embed=embed)
 
 
 async def setup(bot: commands.Bot):
