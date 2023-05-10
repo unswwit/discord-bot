@@ -11,8 +11,8 @@ TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 BOT_NAME = os.getenv("DISCORD_BOT_NAME")
 
 intents = discord.Intents.all()
+# TODO: remove default help command
 bot = commands.Bot(command_prefix="!", intents=intents)
-
 
 @bot.event
 async def setup_hook():
