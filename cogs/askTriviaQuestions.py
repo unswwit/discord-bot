@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from trivia import trivia
-import asyncio
+from pyopentdb import OpenTDBClient, Category, QuestionType, Difficulty
+
 
 
 class asksTriviaQuestionCog(commands.Cog):
@@ -11,75 +11,80 @@ class asksTriviaQuestionCog(commands.Cog):
 
     @app_commands.command(
         name="ask-trivia-questions",
-        description="Asks trivia questions!",
-
+        description="Asks trivia questions!"
     )
 
-
     async def asksTriviaQuestion(self, inter: discord.Interaction):
-        trivia = await trivia.question(amount=1, category=0, quizType='multiple')
-        # question = trivia['question'],
-        # difficulty = trivia['difficulty'],
-        # correctAnswer = trivia['correct_answer'],
-        # incorrectAnswers = trivia['incorrect_answers'],
-        # # incorrectGuesses = [];
-        # id = inter.user.id
+        # Create a client to retrieve 1 "General Knowledge" question with "medium" difficulty
+        client = OpenTDBClient()
+        questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.MEDIUM)
+    
+        questionTxt = questionSet.items[0].question
+        questionDiff = questionSet.items[0].difficulty.name.title()
+        # answerChoices = '\n'.join(questionList[0].choices)
+        choices = questionSet.items[0].choices
+        answerIndx = questionSet.items[0].answer_index
 
-        # embed = discord.Embed(
-        #     # title=f"Trivia Question!",
-        #     description=f"{question} \n {difficulty} \n {correctAnswer} \n {incorrectAnswers}",
-        #     color=discord.Color.orange(),
-        # )
 
-        # for incorrectAnswer in incorrectAnswers:
-        #     view = MyView(id, incorrectAnswer, correctAnswer)
+        embed = discord.Embed(
+            # title=f"Trivia Question!",
+            description=f"Question: {questionTxt} \n\n Difficulty: {questionDiff} \n\n Choices",
+            color=discord.Color.orange(),
+        )
 
-        # await inter.response.send_message(
-        #     content=f"Trivia Question!", embed=embed, view=view
-        # )
+        # print(questionSet.items[0].choices)
+        print("\n\n\n\n")
+        # print(questionSet)
+        view = MyView(choices, answerIndx)
+        await inter.response.send_message(
+            content=f"Trivia Question!", 
+            embed=embed,
+            view=view
+        )
+
+        # Send the question as a message
+        # await ctx.send(question.question)
 
 
 class MyView(discord.ui.View):
-    def __init__(self, creatorId, incorrectAnswer, correctAnswer):
+    def __init__(self, choices, answerIndx):
         super().__init__(timeout=None)
-        # initialize set of answers
-        self.answers = {incorrectAnswer, correctAnswer}
+        # initialize set of choices
+        self.choices = choices
+        self.correct_choice = choices[answerIndx]
 
-    @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
-    async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageCorrect(inter)
-
-    @discord.ui.button(style=discord.ButtonStyle.red, label="".join(incorrectAnswer))
-    async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageIncorrect(inter)
-
-    def __init__(self, creatorId, incorrectAnswer, correctAnswer):
-        super().__init__(timeout=None)
-        # initialize set of answers
-        self.answers = {incorrectAnswer, correctAnswer}
-
-    @discord.ui.button(style=discord.ButtonStyle.green, label="".join(correctAnswer))
-    async def correct(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageCorrect(inter)
-
-    @discord.ui.button(style=discord.ButtonStyle.red, label=incorrectAnswer)
-    async def incorrect(self, inter: discord.Interaction, button: discord.ui.Button):
-        await self.updateMessageIncorrect(inter)
-
-    async def updateMessageCorrect(self, inter: discord.Interaction):
-
-        embed = discord.Embed(
-
+        # create select menu with all choices
+        self.select_menu = discord.ui.Select(
+            placeholder='Select a choice...',
+            options=[discord.SelectOption(label=choice) for choice in self.choices],
+            max_values=1,
+            min_values=1
         )
-        await inter.response.edit_message(embed=embed)
 
-    async def updateMessageIncorrect(self, inter: discord.Interaction):
+        # add select menu to view
+        self.add_item(self.select_menu)
+        print(self.correct_choice)
 
-        embed = discord.Embed(
+    async def on_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+        # handle user selection
+        selected_choice = {select.values[0]} 
+        print(selected_choice)
+        print(self.correct_choice)
+        if selected_choice == self.correct_choice:
+            # if the selected choice is correct, display a text
+            await interaction.response.send_message(f"You selected the correct choice!")
+        else:
+            # if the selected choice is incorrect, do nothing
+            await interaction.response.send_message(f"You selected the wrong choice!")
 
-        )
-        await inter.response.edit_message(embed=embed)
+        # remove selected choice from choices set
+        self.choices.remove(selected_choice)
 
+        # update select menu options with remaining choices
+        self.select_menu.options = [discord.SelectOption(label=choice) for choice in self.choices]
+        if not self.choices:
+            # if there are no more choices, disable select menu
+            self.select_menu.disabled = True
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(asksTriviaQuestionCog(bot))
