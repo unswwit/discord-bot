@@ -13,12 +13,11 @@ class asksTriviaQuestionCog(commands.Cog):
         name="ask-trivia-questions",
         description="Asks trivia questions!"
     )
-
     async def asksTriviaQuestion(self, inter: discord.Interaction):
         # Create a client to retrieve 1 "General Knowledge" question with "medium" difficulty
         client = OpenTDBClient()
         questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.MEDIUM)
-    
+
         questionTxt = questionSet.items[0].question
         questionDiff = questionSet.items[0].difficulty.name.title()
         # answerChoices = '\n'.join(questionList[0].choices)
@@ -33,11 +32,11 @@ class asksTriviaQuestionCog(commands.Cog):
         )
 
         # print(questionSet.items[0].choices)
-        print("\n\n\n\n")
+        # print("\n\n\n\n")
         # print(questionSet)
         view = MyView(choices, answerIndx)
         await inter.response.send_message(
-            content=f"Trivia Question!", 
+            content=f"Trivia Question!",
             embed=embed,
             view=view
         )
@@ -45,29 +44,63 @@ class asksTriviaQuestionCog(commands.Cog):
         # Send the question as a message
         # await ctx.send(question.question)
 
-
 class MyView(discord.ui.View):
     def __init__(self, choices, answerIndx):
         super().__init__(timeout=None)
         # initialize set of choices
-        self.choices = choices
-        self.correct_choice = choices[answerIndx]
+        # self.choices = choices
+        # self.correct_choice = choices[answerIndx]
 
         # create select menu with all choices
-        self.select_menu = discord.ui.Select(
-            placeholder='Select a choice...',
-            options=[discord.SelectOption(label=choice) for choice in self.choices],
-            max_values=1,
-            min_values=1
-        )
+        # self.select_menu = discord.ui.Select(
+        #     placeholder='Select a choice...',
+        #     options=[discord.SelectOption(label=choice) for choice in self.choices],
+        #     max_values=1,
+        #     min_values=1
+        # )
+
+        self.select_menu = AnswersSelectMenu(choices, answerIndx)
 
         # add select menu to view
         self.add_item(self.select_menu)
-        print(self.correct_choice)
+        # print(self.correct_choice)
+        # print(self.select_menu.values)
 
-    async def on_select(self, interaction: discord.Interaction, select: discord.ui.Select):
-        # handle user selection
-        selected_choice = {select.values[0]} 
+    # async def on_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+    #     # handle user selection
+    #     selected_choice = {self.select_menu.values[0]}
+    #     print(selected_choice)
+    #     print(self.correct_choice)
+    #     if selected_choice == self.correct_choice:
+    #         # if the selected choice is correct, display a text
+    #         await interaction.response.send_message(f"You selected the correct choice!", ephemeral=True)
+    #     else:
+    #         # if the selected choice is incorrect, do nothing
+    #         await interaction.response.send_message(f"You selected the wrong choice!", ephemeral=True)
+
+    #     # remove selected choice from choices set
+    #     self.choices.remove(selected_choice)
+
+    #     # update select menu options with remaining choices
+    #     self.select_menu.options = [discord.SelectOption(label=choice) for choice in self.choices]
+    #     if not self.choices:
+    #         # if there are no more choices, disable select menu
+    #         self.select_menu.disabled = True
+
+class AnswersSelectMenu(discord.ui.Select):
+    def __init__(self, choices, answerIndx):
+        self.choices = choices
+        self.correct_choice = choices[answerIndx]
+
+        super().__init__(
+            placeholder='Select a choice...',
+            options=[discord.SelectOption(label=choice) for choice in choices],
+            max_values=1,
+            min_values=1
+            )
+
+    async def callback(self, interaction: discord.Interaction):
+        selected_choice = self.values[0]
         print(selected_choice)
         print(self.correct_choice)
         if selected_choice == self.correct_choice:
@@ -76,15 +109,6 @@ class MyView(discord.ui.View):
         else:
             # if the selected choice is incorrect, do nothing
             await interaction.response.send_message(f"You selected the wrong choice!")
-
-        # remove selected choice from choices set
-        self.choices.remove(selected_choice)
-
-        # update select menu options with remaining choices
-        self.select_menu.options = [discord.SelectOption(label=choice) for choice in self.choices]
-        if not self.choices:
-            # if there are no more choices, disable select menu
-            self.select_menu.disabled = True
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(asksTriviaQuestionCog(bot))
