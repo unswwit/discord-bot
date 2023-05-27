@@ -15,26 +15,24 @@ class asksTriviaQuestionCog(commands.Cog):
     )
     @app_commands.describe(difficulty='choose a difficulty')
     @app_commands.choices(difficulty=[
-        app_commands.Choice(name='easy', value=1),
-        app_commands.Choice(name='medium', value=2),
-        app_commands.Choice(name='hard', value=3)
+        app_commands.Choice(name='EASY', value=1),
+        app_commands.Choice(name='MEDIUM', value=2),
+        app_commands.Choice(name='HARD', value=3)
     ])
 
     async def asksTriviaQuestion(self, inter: discord.Interaction, difficulty: app_commands.Choice[int]):
         # Create a client to retrieve 1 "General Knowledge" question with the specified difficulty
         client = OpenTDBClient()
 
-        if difficulty == inter.easy:
+        if difficulty.value == 1:
             questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.EASY)
-        elif difficulty == "medium":
+        elif difficulty.value == 2:
             questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.MEDIUM)
-        elif difficulty == "hard":
+        elif difficulty.value == 3:
             questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.HARD)
-
 
         questionTxt = questionSet.items[0].question
         questionDiff = questionSet.items[0].difficulty.name.title()
-        # answerChoices = '\n'.join(questionList[0].choices)
         choices = questionSet.items[0].choices
         answerIndx = questionSet.items[0].answer_index
 
@@ -45,7 +43,6 @@ class asksTriviaQuestionCog(commands.Cog):
             color=discord.Color.orange(),
         )
 
-        # print(questionSet.items[0].choices)
         # print("\n\n\n\n")
         # print(questionSet)
         view = MyView(choices, answerIndx)
