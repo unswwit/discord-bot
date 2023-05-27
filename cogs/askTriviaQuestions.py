@@ -13,11 +13,18 @@ class asksTriviaQuestionCog(commands.Cog):
         name="ask-trivia-questions",
         description="Asks trivia questions!"
     )
-    async def asksTriviaQuestion(self, inter: discord.Interaction, difficulty: str):
+    @app_commands.describe(difficulty='choose a difficulty')
+    @app_commands.choices(difficulty=[
+        app_commands.Choice(name='easy', value=1),
+        app_commands.Choice(name='medium', value=2),
+        app_commands.Choice(name='hard', value=3)
+    ])
+
+    async def asksTriviaQuestion(self, inter: discord.Interaction, difficulty: app_commands.Choice[int]):
         # Create a client to retrieve 1 "General Knowledge" question with the specified difficulty
         client = OpenTDBClient()
 
-        if difficulty == "easy":
+        if difficulty == inter.easy:
             questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.EASY)
         elif difficulty == "medium":
             questionSet = client.get_questions(amount=1, category=Category.GENERAL_KNOWLEDGE, difficulty=Difficulty.MEDIUM)
