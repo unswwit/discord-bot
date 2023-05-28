@@ -21,6 +21,8 @@ class asksTriviaQuestionCog(commands.Cog):
     ])
 
     async def asksTriviaQuestion(self, inter: discord.Interaction, difficulty: app_commands.Choice[int]):
+        await inter.response.defer()
+
         # Create a client to retrieve 1 "General Knowledge" question with the specified difficulty
         client = OpenTDBClient()
 
@@ -46,7 +48,7 @@ class asksTriviaQuestionCog(commands.Cog):
         # print("\n\n\n\n")
         # print(questionSet)
         view = MyView(choices, answerIndx)
-        await inter.response.send_message(
+        await inter.followup.send(
             content=f"Trivia Question!",
             embed=embed,
             view=view
