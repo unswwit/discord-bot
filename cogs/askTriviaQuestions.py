@@ -49,7 +49,8 @@ class asksTriviaQuestionCog(commands.Cog):
 
         # print("\n\n\n\n")
         # print(questionSet)
-        view = MyView(choices, answerIndx, self)
+        #changed from self to self.inccorect
+        view = MyView(choices, answerIndx, self.incorrect_answers)
         await inter.followup.send(
             content=f"Trivia Question!\n\n",
             embed=embed,
@@ -60,7 +61,7 @@ class asksTriviaQuestionCog(commands.Cog):
         # await ctx.send(question.question)
 
 class MyView(discord.ui.View):
-    def __init__(self, choices, answerIndx, cog):
+    def __init__(self, choices, answerIndx, incorrect_answers):
         super().__init__(timeout=None)
         # initialize set of choices
         # self.choices = choices
@@ -74,15 +75,15 @@ class MyView(discord.ui.View):
         #     min_values=1
         # )
 
-        self.select_menu = AnswersSelectMenu(choices, answerIndx, cog)
+        self.select_menu = AnswersSelectMenu(choices, answerIndx, incorrect_answers)
 
         # add select menu to view
         self.add_item(self.select_menu)
         # print(self.correct_choice)
         # print(self.select_menu.values)
 
-        self.incorrect_answers = cog.incorrect_answers
-
+        #self.incorrect_answers = cog.incorrect_answers
+  
     # async def on_select(self, interaction: discord.Interaction, select: discord.ui.Select):
     #     # handle user selection
     #     selected_choice = {self.select_menu.values[0]}
@@ -105,10 +106,10 @@ class MyView(discord.ui.View):
     #         self.select_menu.disabled = True
 
 class AnswersSelectMenu(discord.ui.Select):
-    def __init__(self, choices, answerIndx, cog):
+    def __init__(self, choices, answerIndx, incorrect_answers):
         self.choices = choices
         self.correct_choice = choices[answerIndx]
-        self.cog = cog
+        self.incorrect_answers = incorrect_answers
         super().__init__(
             placeholder='Select a choice...',
             options=[discord.SelectOption(label=choice) for choice in choices],
@@ -124,7 +125,7 @@ class AnswersSelectMenu(discord.ui.Select):
             # if the selected choice is correct, display a text
             await interaction.response.send_message(f"You selected the correct choice!")
         else:
-            self.cog.incorrect_answers += 1
+            self.incorrect_answers += 1
             # if the selected choice is incorrect, do nothing
             await interaction.response.send_message(f"You selected the wrong choice!")
 
