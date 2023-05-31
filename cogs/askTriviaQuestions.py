@@ -8,6 +8,8 @@ from pyopentdb import OpenTDBClient, Category, QuestionType, Difficulty
 class asksTriviaQuestionCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        # Counter variable for incorrect answers
+        self.incorrect_answers = 0 
 
     @app_commands.command(
         name="ask-trivia-questions",
@@ -41,15 +43,16 @@ class asksTriviaQuestionCog(commands.Cog):
 
         embed = discord.Embed(
             # title=f"Trivia Question!",
-            description=f"Question: {questionTxt} \n\n Difficulty: {questionDiff} \n\n Choices",
+            description=f"Question: {questionTxt} \n\n Difficulty: {questionDiff} \n\n Incorrect answers so far: {self.incorrect_answers} \n\n Choices ",
             color=discord.Color.orange(),
         )
 
         # print("\n\n\n\n")
         # print(questionSet)
-        view = MyView(choices, answerIndx)
+        #changed from self to self.inccorect
+        view = MyView(choices, answerIndx, self.incorrect_answers)
         await inter.followup.send(
-            content=f"Trivia Question!",
+            content=f"Trivia Question!\n\n",
             embed=embed,
             view=view
         )
@@ -58,7 +61,7 @@ class asksTriviaQuestionCog(commands.Cog):
         # await ctx.send(question.question)
 
 class MyView(discord.ui.View):
-    def __init__(self, choices, answerIndx):
+    def __init__(self, choices, answerIndx, incorrect_answers):
         super().__init__(timeout=None)
         # initialize set of choices
         # self.choices = choices
@@ -72,13 +75,15 @@ class MyView(discord.ui.View):
         #     min_values=1
         # )
 
-        self.select_menu = AnswersSelectMenu(choices, answerIndx)
+        self.select_menu = AnswersSelectMenu(choices, answerIndx, incorrect_answers)
 
         # add select menu to view
         self.add_item(self.select_menu)
         # print(self.correct_choice)
         # print(self.select_menu.values)
 
+        #self.incorrect_answers = cog.incorrect_answers
+  
     # async def on_select(self, interaction: discord.Interaction, select: discord.ui.Select):
     #     # handle user selection
     #     selected_choice = {self.select_menu.values[0]}
@@ -101,10 +106,10 @@ class MyView(discord.ui.View):
     #         self.select_menu.disabled = True
 
 class AnswersSelectMenu(discord.ui.Select):
-    def __init__(self, choices, answerIndx):
+    def __init__(self, choices, answerIndx, incorrect_answers):
         self.choices = choices
         self.correct_choice = choices[answerIndx]
-
+        self.incorrect_answers = incorrect_answers
         super().__init__(
             placeholder='Select a choice...',
             options=[discord.SelectOption(label=choice) for choice in choices],
@@ -120,9 +125,9 @@ class AnswersSelectMenu(discord.ui.Select):
             # if the selected choice is correct, display a text
             await interaction.response.send_message(f"You selected the correct choice!")
         else:
+            self.incorrect_answers += 1
             # if the selected choice is incorrect, do nothing
             await interaction.response.send_message(f"You selected the wrong choice!")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(asksTriviaQuestionCog(bot))
-
