@@ -10,10 +10,12 @@ class asksTriviaQuestionCog(commands.Cog):
         self.bot = bot
         # Counter variable for incorrect answers
         self.incorrect_answers = 0 
+        self.answered_users = set()
 
     @app_commands.command(
         name="ask-trivia-questions",
         description="Asks trivia questions!"
+        
     )
     @app_commands.describe(difficulty='choose a difficulty')
     @app_commands.choices(difficulty=[
@@ -24,7 +26,7 @@ class asksTriviaQuestionCog(commands.Cog):
 
     async def asksTriviaQuestion(self, inter: discord.Interaction, difficulty: app_commands.Choice[int]):
         await inter.response.defer()
-
+    
         # Create a client to retrieve 1 "General Knowledge" question with the specified difficulty
         client = OpenTDBClient()
 
@@ -47,7 +49,7 @@ class asksTriviaQuestionCog(commands.Cog):
         )
 
         #changed from self to self.inccorect
-        view = MyView(choices, answerIndx, questionTxt, questionDiff, self.incorrect_answers, False)
+        view = MyView(choices, answerIndx, questionTxt, questionDiff, self.incorrect_answers, self.answered_users, False)
         await inter.followup.send(
             # content=f"Trivia Question!\n\n",
             embed=embed,
@@ -55,47 +57,46 @@ class asksTriviaQuestionCog(commands.Cog):
         )
 
 class MyView(discord.ui.View):
-    def __init__(self, choices, answerIndx, questionTxt, questionDiff, incorrect_answers, disabled):
+    def __init__(self, choices, answerIndx, questionTxt, questionDiff, incorrect_answers, answered_users, disabled):
         super().__init__(timeout=None)
 
-        self.select_menu = AnswersSelectMenu(choices, answerIndx, questionTxt, questionDiff, incorrect_answers, disabled)
+        self.select_menu = AnswersSelectMenu(choices, answerIndx, questionTxt, questionDiff, incorrect_answers, answered_users, disabled)
 
         # add select menu to view
         self.add_item(self.select_menu)
 
 class AnswersSelectMenu(discord.ui.Select):
-    def __init__(self, choices, answerIndx, questionTxt, questionDiff, incorrect_answers, disabled):
+    def __init__(self, choices, answerIndx, questionTxt, questionDiff, incorrect_answers, answered_users, disabled):
         self.questionTxt = questionTxt
         self.questionDiff = questionDiff
         self.choices = choices
         self.correct_choice = choices[answerIndx]
         self.answerIndx = answerIndx
         self.incorrect_answers = incorrect_answers
-        self.answered_users = set()  # Set to keep track of answered users
+        self.answered_users = answered_users 
 
         super().__init__(
             placeholder='Select a choice...',
             options=[discord.SelectOption(label=choice) for choice in choices],
             max_values=1,
             min_values=1,
+
         )
 
         self.disabled = disabled
 
     async def callback(self, interaction: discord.Interaction):
         user_id = interaction.user.id
+        
+        selected_choice = self.values[0]
 
         if user_id in self.answered_users:
             # User has already answered, send ephemeral message
             await interaction.response.send_message(
-                "You've already attempted answering this question before!",
+                f"You've already attempted answering this question before!",
                 ephemeral=True,
             )
             return
-
-        self.answered_users.add(user_id)  # Add the user to the answered users set
-
-        selected_choice = self.values[0]
 
         if selected_choice == self.correct_choice:
             # if the selected choice is correct, display a text
@@ -108,13 +109,15 @@ class AnswersSelectMenu(discord.ui.Select):
             await self.updateMessageIncorrect(interaction)
             # await interaction.response.send_message(f"You selected the wrong choice!")
     
+        self.answered_users.add(user_id)  # Add the user to the answered users set
+
     async def updateMessageIncorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
             description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.red(),
         )
-        view = MyView(self.choices, self.answerIndx, self.questionTxt, self.questionDiff, self.incorrect_answers, False)
+        view = MyView(self.choices, self.answerIndx, self.questionTxt, self.questionDiff, self.incorrect_answers, self.answered_users, False)
         await inter.response.edit_message(embed=embed, view=view)
 
     async def updateMessageCorrect(self, inter: discord.Interaction):
@@ -123,7 +126,7 @@ class AnswersSelectMenu(discord.ui.Select):
             description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.green(),
         )
-        view = MyView(self.choices, self.answerIndx, self.questionTxt, self.questionDiff, self.incorrect_answers, True)
+        view = MyView(self.choices, self.answerIndx, self.questionTxt, self.questionDiff, self.incorrect_answers, self.answered_users, True)
         await inter.response.edit_message(embed=embed, view=view)
 
 async def setup(bot: commands.Bot):
