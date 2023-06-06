@@ -90,7 +90,7 @@ class AnswersSelectMenu(discord.ui.Select):
         
         selected_choice = self.values[0]
 
-        if user_id in self.answered_users:
+        if user_id in self.answered_users or user_id != interaction.user.id:
             # User has already answered, send ephemeral message
             await interaction.response.send_message(
                 f"You've already attempted answering this question before!",
