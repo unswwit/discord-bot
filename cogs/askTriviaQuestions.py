@@ -26,7 +26,10 @@ class asksTriviaQuestionCog(commands.Cog):
 
     async def asksTriviaQuestion(self, inter: discord.Interaction, difficulty: app_commands.Choice[int]):
         await inter.response.defer()
-    
+        
+        # Reset the answered_users set
+        self.answered_users = set()  
+
         # Create a client to retrieve 1 "General Knowledge" question with the specified difficulty
         client = OpenTDBClient()
 
@@ -90,7 +93,7 @@ class AnswersSelectMenu(discord.ui.Select):
         
         selected_choice = self.values[0]
 
-        if user_id in self.answered_users or user_id != interaction.user.id:
+        if user_id in self.answered_users:
             # User has already answered, send ephemeral message
             await interaction.response.send_message(
                 f"You've already attempted answering this question before!",
