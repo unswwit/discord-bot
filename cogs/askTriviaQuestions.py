@@ -120,7 +120,7 @@ class AnswersSelectMenu(discord.ui.Select):
         self.questionTxt = questionTxt
         self.questionDiff = questionDiff
         self.choices = choices
-        self.correct_choice = choices[answerIndx]
+        self.correctChoice = choices[answerIndx]
         self.answerIndx = answerIndx
         self.incorrectAnswers = incorrectAnswers
         self.answeredUsers = answeredUsers
@@ -135,11 +135,11 @@ class AnswersSelectMenu(discord.ui.Select):
         self.disabled = disabled
 
     async def callback(self, interaction: discord.Interaction):
-        user_id = interaction.user.id
+        userId = interaction.user.id
 
-        selected_choice = self.values[0]
+        selectedChoice = self.values[0]
 
-        if user_id in self.answeredUsers:
+        if userId in self.answeredUsers:
             # User has already answered, send ephemeral message
             await interaction.response.send_message(
                 f"You've already attempted answering this question before!",
@@ -147,18 +147,14 @@ class AnswersSelectMenu(discord.ui.Select):
             )
             return
 
-        if selected_choice == self.correct_choice:
+        if selectedChoice == self.correctChoice:
             # if the selected choice is correct, display a text
             await self.updateMessageCorrect(interaction)
-            # await interaction.response.send_message(f"You selected the correct choice!")
-
         else:
             self.incorrectAnswers += 1
-            # if the selected choice is incorrect, do nothing
             await self.updateMessageIncorrect(interaction)
-            # await interaction.response.send_message(f"You selected the wrong choice!")
 
-        self.answeredUsers.add(user_id)  # Add the user to the answered users set
+        self.answeredUsers.add(userId)  # Add the user to the answered users set
 
     async def updateMessageIncorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
@@ -180,7 +176,7 @@ class AnswersSelectMenu(discord.ui.Select):
     async def updateMessageCorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrectAnswers}",
+            description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correctChoice} \n\n Incorrect answers so far: {self.incorrectAnswers}",
             color=discord.Color.green(),
         )
         view = MyView(
