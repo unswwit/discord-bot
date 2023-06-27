@@ -52,23 +52,23 @@ class asksTriviaQuestionCog(commands.Cog):
                 difficulty=Difficulty.HARD,
             )
 
-        questionTxt = questionSet.items[0].question
-        questionDiff = questionSet.items[0].difficulty.name.title()
+        question_txt = questionSet.items[0].question
+        question_diff = questionSet.items[0].difficulty.name.title()
         choices = questionSet.items[0].choices
-        answerIndx = questionSet.items[0].answer_index
+        answer_indx = questionSet.items[0].answer_index
 
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{questionTxt} \n\n Difficulty: {questionDiff} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{question_txt} \n\n Difficulty: {question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.orange(),
         )
 
         # changed from self to self.inccorect
         view = MyView(
             choices,
-            answerIndx,
-            questionTxt,
-            questionDiff,
+            answer_indx,
+            question_txt,
+            question_diff,
             self.incorrect_answers,
             self.answered_users,
             False,
@@ -84,9 +84,9 @@ class MyView(discord.ui.View):
     def __init__(
         self,
         choices,
-        answerIndx,
-        questionTxt,
-        questionDiff,
+        answer_indx,
+        question_txt,
+        question_diff,
         incorrect_answers,
         answered_users,
         disabled,
@@ -95,9 +95,9 @@ class MyView(discord.ui.View):
 
         self.select_menu = AnswersSelectMenu(
             choices,
-            answerIndx,
-            questionTxt,
-            questionDiff,
+            answer_indx,
+            question_txt,
+            question_diff,
             incorrect_answers,
             answered_users,
             disabled,
@@ -111,18 +111,18 @@ class AnswersSelectMenu(discord.ui.Select):
     def __init__(
         self,
         choices,
-        answerIndx,
-        questionTxt,
-        questionDiff,
+        answer_indx,
+        question_txt,
+        question_diff,
         incorrect_answers,
         answered_users,
         disabled,
     ):
-        self.questionTxt = questionTxt
-        self.questionDiff = questionDiff
+        self.question_txt = question_txt
+        self.question_diff = question_diff
         self.choices = choices
-        self.correct_choice = choices[answerIndx]
-        self.answerIndx = answerIndx
+        self.correct_choice = choices[answer_indx]
+        self.answer_indx = answer_indx
         self.incorrect_answers = incorrect_answers
         self.answered_users = answered_users
 
@@ -164,14 +164,14 @@ class AnswersSelectMenu(discord.ui.Select):
     async def updateMessageIncorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.red(),
         )
         view = MyView(
             self.choices,
-            self.answerIndx,
-            self.questionTxt,
-            self.questionDiff,
+            self.answer_indx,
+            self.question_txt,
+            self.question_diff,
             self.incorrect_answers,
             self.answered_users,
             False,
@@ -181,14 +181,14 @@ class AnswersSelectMenu(discord.ui.Select):
     async def updateMessageCorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.green(),
         )
         view = MyView(
             self.choices,
-            self.answerIndx,
-            self.questionTxt,
-            self.questionDiff,
+            self.answer_indx,
+            self.question_txt,
+            self.question_diff,
             self.incorrect_answers,
             self.answered_users,
             True,
