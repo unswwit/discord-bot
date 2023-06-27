@@ -8,8 +8,8 @@ class asksTriviaQuestionCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         # Counter variable for incorrect answers
-        self.incorrect_answers = 0
-        self.answered_users = set()
+        self.incorrectAnswers = 0
+        self.answeredUsers = set()
 
     @app_commands.command(
         name="ask-trivia-questions", description="Asks trivia questions!"
@@ -17,9 +17,9 @@ class asksTriviaQuestionCog(commands.Cog):
     @app_commands.describe(difficulty="choose a difficulty")
     @app_commands.choices(
         difficulty=[
-            app_commands.Choice(name="EASY", value=1),
-            app_commands.Choice(name="MEDIUM", value=2),
-            app_commands.Choice(name="HARD", value=3),
+            app_commands.Choice(name="Easy", value=1),
+            app_commands.Choice(name="Medium", value=2),
+            app_commands.Choice(name="Hard", value=3),
         ]
     )
     async def asksTriviaQuestion(
@@ -28,7 +28,7 @@ class asksTriviaQuestionCog(commands.Cog):
         await inter.response.defer()
 
         # Reset the answered_users set
-        self.answered_users = set()
+        self.answeredUsers = set()
 
         # Create a client to retrieve 1 "General Knowledge" question with the specified difficulty
         client = OpenTDBClient()
@@ -52,29 +52,28 @@ class asksTriviaQuestionCog(commands.Cog):
                 difficulty=Difficulty.HARD,
             )
 
-        question_txt = questionSet.items[0].question
-        question_diff = questionSet.items[0].difficulty.name.title()
+        questionTxt = questionSet.items[0].question
+        questionDiff = questionSet.items[0].difficulty.name.title()
         choices = questionSet.items[0].choices
-        answer_indx = questionSet.items[0].answer_index
+        answerIndx = questionSet.items[0].answer_index
 
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{question_txt} \n\n Difficulty: {question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{questionTxt} \n\n Difficulty: {questionDiff} \n\n Incorrect answers so far: {self.incorrectAnswers}",
             color=discord.Color.orange(),
         )
 
         # changed from self to self.inccorect
         view = MyView(
             choices,
-            answer_indx,
-            question_txt,
-            question_diff,
-            self.incorrect_answers,
-            self.answered_users,
+            answerIndx,
+            questionTxt,
+            questionDiff,
+            self.incorrectAnswers,
+            self.answeredUsers,
             False,
         )
         await inter.followup.send(
-            # content=f"Trivia Question!\n\n",
             embed=embed,
             view=view,
         )
@@ -84,22 +83,22 @@ class MyView(discord.ui.View):
     def __init__(
         self,
         choices,
-        answer_indx,
-        question_txt,
-        question_diff,
-        incorrect_answers,
-        answered_users,
+        answerIndx,
+        questionTxt,
+        questionDiff,
+        incorrectAnswers,
+        answeredUsers,
         disabled,
     ):
         super().__init__(timeout=None)
 
         self.select_menu = AnswersSelectMenu(
             choices,
-            answer_indx,
-            question_txt,
-            question_diff,
-            incorrect_answers,
-            answered_users,
+            answerIndx,
+            questionTxt,
+            questionDiff,
+            incorrectAnswers,
+            answeredUsers,
             disabled,
         )
 
@@ -111,20 +110,20 @@ class AnswersSelectMenu(discord.ui.Select):
     def __init__(
         self,
         choices,
-        answer_indx,
-        question_txt,
-        question_diff,
-        incorrect_answers,
-        answered_users,
+        answerIndx,
+        questionTxt,
+        questionDiff,
+        incorrectAnswers,
+        answeredUsers,
         disabled,
     ):
-        self.question_txt = question_txt
-        self.question_diff = question_diff
+        self.questionTxt = questionTxt
+        self.questionDiff = questionDiff
         self.choices = choices
-        self.correct_choice = choices[answer_indx]
-        self.answer_indx = answer_indx
-        self.incorrect_answers = incorrect_answers
-        self.answered_users = answered_users
+        self.correct_choice = choices[answerIndx]
+        self.answerIndx = answerIndx
+        self.incorrectAnswers = incorrectAnswers
+        self.answeredUsers = answeredUsers
 
         super().__init__(
             placeholder="Select a choice...",
@@ -140,7 +139,7 @@ class AnswersSelectMenu(discord.ui.Select):
 
         selected_choice = self.values[0]
 
-        if user_id in self.answered_users:
+        if user_id in self.answeredUsers:
             # User has already answered, send ephemeral message
             await interaction.response.send_message(
                 f"You've already attempted answering this question before!",
@@ -154,26 +153,26 @@ class AnswersSelectMenu(discord.ui.Select):
             # await interaction.response.send_message(f"You selected the correct choice!")
 
         else:
-            self.incorrect_answers += 1
+            self.incorrectAnswers += 1
             # if the selected choice is incorrect, do nothing
             await self.updateMessageIncorrect(interaction)
             # await interaction.response.send_message(f"You selected the wrong choice!")
 
-        self.answered_users.add(user_id)  # Add the user to the answered users set
+        self.answeredUsers.add(user_id)  # Add the user to the answered users set
 
     async def updateMessageIncorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n Incorrect answers so far: {self.incorrectAnswers}",
             color=discord.Color.red(),
         )
         view = MyView(
             self.choices,
-            self.answer_indx,
-            self.question_txt,
-            self.question_diff,
-            self.incorrect_answers,
-            self.answered_users,
+            self.answerIndx,
+            self.questionTxt,
+            self.questionDiff,
+            self.incorrectAnswers,
+            self.answeredUsers,
             False,
         )
         await inter.response.edit_message(embed=embed, view=view)
@@ -181,16 +180,16 @@ class AnswersSelectMenu(discord.ui.Select):
     async def updateMessageCorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{self.questionTxt} \n\n Difficulty: {self.questionDiff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrectAnswers}",
             color=discord.Color.green(),
         )
         view = MyView(
             self.choices,
-            self.answer_indx,
-            self.question_txt,
-            self.question_diff,
-            self.incorrect_answers,
-            self.answered_users,
+            self.answerIndx,
+            self.questionTxt,
+            self.questionDiff,
+            self.incorrectAnswers,
+            self.answeredUsers,
             True,
         )
         await inter.response.edit_message(embed=embed, view=view)
