@@ -17,3 +17,4 @@ html5lib==1.1
 bs4==0.0.1
 tzdata==2023.3
 pyopentdb==0.0.4
+wonderwords==2.2.0
