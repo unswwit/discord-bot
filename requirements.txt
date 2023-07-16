@@ -2,9 +2,9 @@ aiohttp==3.8.4
 aiosignal==1.3.1
 async-timeout==4.0.2
 attrs==23.1.0
-black==23.3.0
-charset-normalizer==2.1.1
-discord.py==2.2.3
+black==23.7.0
+charset-normalizer==3.2.0
+discord.py==2.3.1
 frozenlist==1.3.3
 idna==3.4
 multidict==6.0.4
