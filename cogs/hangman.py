@@ -91,7 +91,7 @@ class MyView(discord.ui.View):
 
     def create_buttons(self):
         self.buttons = []
-        for letter in list(string.ascii_lowercase):
+        for letter in list(string.ascii_uppercase):
             button_callback = self.create_button_callback(letter)
             button = discord.ui.Button(
                 style=discord.ButtonStyle.green, label=letter, custom_id=letter
