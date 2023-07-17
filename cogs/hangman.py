@@ -1,4 +1,5 @@
 import discord
+import string
 from discord.ext import commands
 from discord import app_commands
 from wonderwords import RandomWord
@@ -78,35 +79,7 @@ class MyView(discord.ui.View):
     def __init__(self, creatorId):
         super().__init__(timeout=None)
         self.creatorId = creatorId
-        self.pages = []  # list to store button pages
-        self.letters = [
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "O",
-            "P",
-            "Q",
-            "R",
-            "S",
-            "T",
-            "U",
-            "V",
-            "W",
-            "X",
-            "Y",
-            "Z",
-        ]
+        self.pages = []  # list to store button pages   
         self.page_size = 13  # Number of buttons per page
 
         self.create_buttons()
@@ -118,7 +91,7 @@ class MyView(discord.ui.View):
 
     def create_buttons(self):
         self.buttons = []
-        for letter in self.letters:
+        for letter in list(string.ascii_lowercase):
             button_callback = self.create_button_callback(letter)
             button = discord.ui.Button(
                 style=discord.ButtonStyle.green, label=letter, custom_id=letter
