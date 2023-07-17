@@ -79,7 +79,7 @@ class MyView(discord.ui.View):
     def __init__(self, creatorId):
         super().__init__(timeout=None)
         self.creatorId = creatorId
-        self.pages = []  # list to store button pages   
+        self.pages = []  # list to store button pages
         self.page_size = 13  # Number of buttons per page
 
         self.create_buttons()
