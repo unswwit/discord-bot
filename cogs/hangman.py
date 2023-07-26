@@ -65,8 +65,57 @@ class hangmanCog(commands.Cog):
 
         embed = discord.Embed(
             title=f"Hangman!",
-            description=f"Selected category: {category.name}\nRandom word: {randomWord}",
-            color=discord.Color.orange(),
+            description=f"Selected category: {category.name}\nRandom word: {randomWord}\n",
+        #"```\n"
+        #"   +---+\n"
+        #"   |   |\n"
+        #"       |\n"
+        #"       |\n"
+        #"       ===\n"
+        #"```\n"  # 0 wrong
+        #"```\n"
+        #"   +---+\n"
+        #"   |   |\n"
+        #"   O   |\n"
+        #"       |\n"
+        #"       ===\n"
+        #"```\n"  # 1 wrong
+        #"```\n"
+        #"   +---+\n"
+        #"   |   |\n"
+        #"   O   |\n"
+        #"   |   |\n"
+        #"       ===\n"
+        #"```\n"  # 2 wrong
+        #"```\n"
+        #"   +---+\n"
+        #"   |   |\n"
+        #"   O   |\n"
+        #"  /|   |\n"
+        #"       ===\n"
+        #"```\n"  # 3 wrong
+        #"```\n"
+        #"   +---+\n"
+        #"   |   |\n"
+        #"   O   |\n"
+        #"  /|\\  |\n"
+        #"       ===\n"
+        #"```\n"  # 4 wrong
+        #"```\n"
+        #"   +---+\n"
+        #"   |   |\n"
+        #"   O   |\n"
+        #"  /|\\  |\n"
+        #"  /    ===\n"
+        #"```\n"  # 5 wrong
+        #"```\n"
+        #"   +---+\n"
+        #"   |   |\n"
+        #"   O   |\n"
+        #"  /|\\  |\n"
+        #"  / \\  ===\n"
+        #"```",  # 6 wrong
+        color=discord.Color.orange(),
         )
         view = MyView(id)
         await inter.followup.send(
