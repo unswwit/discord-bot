@@ -71,6 +71,7 @@ class hangmanCog(commands.Cog):
             "   |    |\n"
             "   |   \n"
             "   |   \n"
+            "   |   \n"
             "   ===\n"
             "```",
             color=discord.Color.orange(),
@@ -112,12 +113,14 @@ class MyView(discord.ui.View):
             "   |    |\n"
             "   |   \n"
             "   |   \n"
+            "   |   \n"
             "   ===\n"
             "```",  # 0 wrong
             "```\n"
             "   +----+\n"
             "   |    |\n"
             "   |    O\n"
+            "   |   \n"
             "   |   \n"
             "   ===\n"
             "```",  # 1 wrong
@@ -126,6 +129,7 @@ class MyView(discord.ui.View):
             "   |    |\n"
             "   |    O\n"
             "   |    |\n"
+            "   |   \n"
             "   ===\n"
             "```",  # 2 wrong
             "```\n"
@@ -133,6 +137,7 @@ class MyView(discord.ui.View):
             "   |    |\n"
             "   |    O\n"
             "   |    |\\\n"
+            "   |   \n"
             "   ===\n"
             "```",  # 3 wrong
             "```\n"
@@ -140,6 +145,7 @@ class MyView(discord.ui.View):
             "   |    |\n"
             "   |    O\n"
             "   |   /|\\\n"
+            "   |   \n"
             "   ===\n"
             "```",  # 4 wrong
             "```\n"
@@ -147,14 +153,16 @@ class MyView(discord.ui.View):
             "   |    |\n"
             "   |    O\n"
             "   |   /|\\\n"
-            "   ===   \\\n"
+            "   |     \\\n"
+            "   === \n"
             "```",  # 5 wrong
             "```\n"
             "   +----+\n"
             "   |    |\n"
             "   |    O\n"
             "   |   /|\\\n"
-            "   === / \\\n"
+            "   |   / \\\n"
+            "   === \n"
             "```",  # 6 wrong
         ]
 
