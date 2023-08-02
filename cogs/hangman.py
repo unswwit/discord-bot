@@ -65,59 +65,17 @@ class hangmanCog(commands.Cog):
 
         embed = discord.Embed(
             title=f"Hangman!",
-            description=f"Selected category: {category.name}\nRandom word: {randomWord}\n",
-        #"```\n"
-        #"   +---+\n"
-        #"   |   |\n"
-        #"       |\n"
-        #"       |\n"
-        #"       ===\n"
-        #"```\n"  # 0 wrong
-        #"```\n"
-        #"   +---+\n"
-        #"   |   |\n"
-        #"   O   |\n"
-        #"       |\n"
-        #"       ===\n"
-        #"```\n"  # 1 wrong
-        #"```\n"
-        #"   +---+\n"
-        #"   |   |\n"
-        #"   O   |\n"
-        #"   |   |\n"
-        #"       ===\n"
-        #"```\n"  # 2 wrong
-        #"```\n"
-        #"   +---+\n"
-        #"   |   |\n"
-        #"   O   |\n"
-        #"  /|   |\n"
-        #"       ===\n"
-        #"```\n"  # 3 wrong
-        #"```\n"
-        #"   +---+\n"
-        #"   |   |\n"
-        #"   O   |\n"
-        #"  /|\\  |\n"
-        #"       ===\n"
-        #"```\n"  # 4 wrong
-        #"```\n"
-        #"   +---+\n"
-        #"   |   |\n"
-        #"   O   |\n"
-        #"  /|\\  |\n"
-        #"  /    ===\n"
-        #"```\n"  # 5 wrong
-        #"```\n"
-        #"   +---+\n"
-        #"   |   |\n"
-        #"   O   |\n"
-        #"  /|\\  |\n"
-        #"  / \\  ===\n"
-        #"```",  # 6 wrong
+            description=f"Selected category: {category.name}\nRandom word: {randomWord}\n"
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "       |\n"
+            "       |\n"
+            "       ===\n",
+
         color=discord.Color.orange(),
         )
-        view = MyView(id)
+        view = MyView(id, randomWord, category.name)
         await inter.followup.send(
             embed=embed,
             view=view,
@@ -125,18 +83,71 @@ class hangmanCog(commands.Cog):
 
 
 class MyView(discord.ui.View):
-    def __init__(self, creatorId):
+    def __init__(self, creatorId, randomWord, category):
         super().__init__(timeout=None)
         self.creatorId = creatorId
+        self.randomWord = randomWord
+        self.revealedWord = ''.join('_' if c.isalpha() else c for c in self.randomWord)
+        self.incorrectGuesses = 0
         self.pages = []  # list to store button pages
         self.page_size = 13  # Number of buttons per page
-
+        self.category = category
         self.create_buttons()
         self.split_buttons_into_pages()
-
         self.current_page = 0
         self.add_buttons_to_current_page()
         self.add_page_switching_buttons()
+        self.hangmanStages = [
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "   |   \n"
+            "   |   \n"
+            "   ===\n"
+            "```",  # 0 wrong
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "   |   O\n"
+            "   |   \n"
+            "   ===\n"
+            "```",  # 1 wrong
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "   |   O\n"
+            "   |   |\n"
+            "   ===\n"
+            "```",  # 2 wrong
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "   |   O\n"
+            "   |   |\\\n"
+            "   ===\n"
+            "```",  # 3 wrong
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "   |   O\n"
+            "   |  \\|\\\n"
+            "   ===\n"
+            "```",  # 4 wrong
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "   |   O\n"
+            "   |  \\|\\\n"
+            "   ===   \\\n"
+            "```",  # 5 wrong
+            "```\n"
+            "   +---+\n"
+            "   |   |\n"
+            "   |   O\n"
+            "   |  \\|\\\n"
+            "   === / \\\n"
+            "```"  # 6 wrong
+        ]
 
     def create_buttons(self):
         self.buttons = []
@@ -156,12 +167,39 @@ class MyView(discord.ui.View):
 
     def create_button_callback(self, button_id):
         async def button_callback(interaction):
-            await self.updateMessage(interaction)
+            if not self.guess_is_correct(button_id):
+                for item in self.children:
+                    if item.custom_id == button_id:
+                        item.disabled = True
+                self.incorrectGuesses += 1
+            await self.updateMessage(interaction, button_id)
 
         return button_callback
+    
+    def guess_is_correct(self, guess):
+        correct = guess.lower() in self.randomWord.lower()
+        if correct:
+            self.revealedWord = ''.join(c if c.lower() == guess.lower() else r for c, r in zip(self.randomWord, self.revealedWord))
+        return correct
+    
+    async def updateMessage(self, interaction, button_id):
+        # Create a new embed with the updated information
+        description = f"Selected category: {self.category}\n Random word: {self.randomWord}\n"
+        description += f"{self.hangmanStages[min(self.incorrectGuesses, len(self.hangmanStages)-1)]}"
+        if self.guess_is_correct(button_id):
+            description += f"Correct guess: {self.revealedWord}\n"
+        else:
+            description += f"Incorrect guess: {button_id.lower()}\n"
 
-    # async def updateMessage(self, interaction):
+        embed = discord.Embed(
+            title="Hangman!",
+            description=description,
+            color=discord.Color.orange(),
+        )
 
+        # Update the message with the new embed
+        await interaction.response.edit_message(embed=embed)
+    
     def add_page_switching_buttons(self):
         if self.current_page > 0:
             previous_button = discord.ui.Button(
