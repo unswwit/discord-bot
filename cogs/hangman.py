@@ -100,13 +100,13 @@ class MyView(discord.ui.View):
         self.revealedWord = "".join("_" for c in self.randomWord)
         self.incorrectLetters = []
         self.pages = []  # list to store button pages
-        self.page_size = 13  # Number of buttons per page
+        self.pageSize = 13  # Number of buttons per page
         self.category = category
-        self.create_buttons()
-        self.split_buttons_into_pages()
-        self.current_page = 0
-        self.add_buttons_to_current_page()
-        self.add_page_switching_buttons()
+        self.createButtons()
+        self.splitButtonsIntoPages()
+        self.currentPage = 0
+        self.addButtonsToCurrentPage()
+        self.addPageSwitchingButtons()
         self.hangmanStages = [
             "```\n"
             "   +----+\n"
@@ -166,28 +166,29 @@ class MyView(discord.ui.View):
             "```",  # 6 wrong
         ]
 
-    def create_buttons(self):
+    def createButtons(self):
         self.buttons = []
         for letter in list(string.ascii_uppercase):
-            button_callback = self.create_button_callback(letter)
+            buttonCallback = self.createButtonCallback(letter)
             button = discord.ui.Button(
                 style=discord.ButtonStyle.green, label=letter, custom_id=letter
             )
-            button.callback = button_callback
+            button.callback = buttonCallback
             self.buttons.append(button)
 
-    def split_buttons_into_pages(self):
+    def splitButtonsIntoPages(self):
         self.pages = [
-            self.buttons[i : i + self.page_size]
-            for i in range(0, len(self.buttons), self.page_size)
+            self.buttons[i : i + self.pageSize]
+            for i in range(0, len(self.buttons), self.pageSize)
         ]
 
-    def create_button_callback(self, button_id):
-        async def button_callback(interaction):
+    def createButtonCallback(self, button_id):
+        # Runs when a letter is pressed to update hangman state
+        async def buttonCallback(interaction):
             for item in self.children:
                 if item.custom_id == button_id:
                     item.disabled = True
-                    if not self.guess_is_correct(button_id):
+                    if not self.guessIsCorrect(button_id):
                         self.incorrectLetters.append(button_id)
             if len(self.incorrectLetters) == 6 or self.randomWord == self.revealedWord:
                 for item in self.children:
@@ -196,9 +197,9 @@ class MyView(discord.ui.View):
 
             await self.updateMessage(interaction, button_id)
 
-        return button_callback
+        return buttonCallback
 
-    def guess_is_correct(self, guess):
+    def guessIsCorrect(self, guess):
         correct = guess in self.randomWord
         if correct:
             self.revealedWord = "".join(
@@ -251,41 +252,41 @@ class MyView(discord.ui.View):
         # Update the message with the new embed
         await interaction.response.edit_message(embed=embed, view=self)
 
-    def add_page_switching_buttons(self):
-        if self.current_page > 0:
-            previous_button = discord.ui.Button(
+    def addPageSwitchingButtons(self):
+        if self.currentPage > 0:
+            previousButton = discord.ui.Button(
                 style=discord.ButtonStyle.blurple,
                 label="Previous",
                 custom_id="previous",
             )
-            previous_button.callback = self.previous_page
-            self.add_item(previous_button)
+            previousButton.callback = self.previous_page
+            self.add_item(previousButton)
 
-        if self.current_page < len(self.pages) - 1:
-            next_button = discord.ui.Button(
+        if self.currentPage < len(self.pages) - 1:
+            nextButton = discord.ui.Button(
                 style=discord.ButtonStyle.blurple, label="Next", custom_id="next"
             )
-            next_button.callback = self.next_page
-            self.add_item(next_button)
+            nextButton.callback = self.next_page
+            self.add_item(nextButton)
 
     async def previous_page(self, interaction):
-        if self.current_page > 0:
-            self.current_page -= 1
-            await self.update_view(interaction)
+        if self.currentPage > 0:
+            self.currentPage -= 1
+            await self.updateView(interaction)
 
     async def next_page(self, interaction):
-        if self.current_page < len(self.pages) - 1:
-            self.current_page += 1
-            await self.update_view(interaction)
+        if self.currentPage < len(self.pages) - 1:
+            self.currentPage += 1
+            await self.updateView(interaction)
 
-    async def update_view(self, interaction):
+    async def updateView(self, interaction):
         self.clear_items()
-        self.add_buttons_to_current_page()
-        self.add_page_switching_buttons()
+        self.addButtonsToCurrentPage()
+        self.addPageSwitchingButtons()
         await interaction.response.edit_message(view=self)
 
-    def add_buttons_to_current_page(self):
-        for button in self.pages[self.current_page]:
+    def addButtonsToCurrentPage(self):
+        for button in self.pages[self.currentPage]:
             self.add_item(button)
 
 
