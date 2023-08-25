@@ -5,7 +5,7 @@ from discord import app_commands
 from wonderwords import RandomWord
 
 
-class hangmanCog(commands.Cog):
+class HangmanCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -22,40 +22,40 @@ class hangmanCog(commands.Cog):
             app_commands.Choice(name="Random", value=4),
         ],
     )
-    async def playHangman(
+    async def play_hangman(
         self,
         inter: discord.Interaction,
         category: app_commands.Choice[int],
         word_length: str,
     ):
         await inter.response.defer()
-        r = RandomWord()
 
         if category.value == 1:
-            selectedCategory = ["nouns"]
+            selected_category = ["nouns"]
         elif category.value == 2:
-            selectedCategory = ["adjectives"]
+            selected_category = ["adjectives"]
         elif category.value == 3:
-            selectedCategory = ["verbs"]
+            selected_category = ["verbs"]
         else:
-            selectedCategory = None
+            selected_category = None
 
         if word_length.lower() == "random":
-            selectedLength = None
+            selected_length = None
         else:
             try:
-                selectedLength = int(word_length)
+                selected_length = int(word_length)
             except ValueError:
                 await inter.followup.send(
                     "I can't generate a word unless word_length is an integer or 'Random', please try again."
                 )
                 return
 
+        r = RandomWord()
         try:
-            randomWord = r.word(
-                include_parts_of_speech=selectedCategory,
-                word_min_length=selectedLength,
-                word_max_length=selectedLength,
+            random_word = r.word(
+                include_parts_of_speech=selected_category,
+                word_min_length=selected_length,
+                word_max_length=selected_length,
             )
         except Exception as e:
             await inter.followup.send(
@@ -81,11 +81,11 @@ class hangmanCog(commands.Cog):
         embed.add_field(name="Incorrect Letters", value=f"None", inline=True)
         embed.add_field(
             name="Word",
-            value=f"```{' '.join('_' for c in randomWord)}```",
+            value=f"```{' '.join('_' for c in random_word)}```",
             inline=False,
         )
 
-        view = MyView(id, randomWord, category.name)
+        view = MyView(id, random_word, category.name)
         await inter.followup.send(
             embed=embed,
             view=view,
@@ -93,21 +93,21 @@ class hangmanCog(commands.Cog):
 
 
 class MyView(discord.ui.View):
-    def __init__(self, creatorId, randomWord, category):
+    def __init__(self, creator_id, random_word, category):
         super().__init__(timeout=None)
-        self.creatorId = creatorId
-        self.randomWord = randomWord.upper()
-        self.revealedWord = "".join("_" for c in self.randomWord)
-        self.incorrectLetters = []
+        self.creator_id = creator_id
+        self.random_word = random_word.upper()
+        self.revealed_word = "".join("_" for c in self.random_word)
+        self.incorrect_letters = []
         self.pages = []  # list to store button pages
-        self.pageSize = 13  # Number of buttons per page
+        self.page_size = 13  # Number of buttons per page
         self.category = category
-        self.createButtons()
-        self.splitButtonsIntoPages()
-        self.currentPage = 0
-        self.addButtonsToCurrentPage()
-        self.addPageSwitchingButtons()
-        self.hangmanStages = [
+        self.create_buttons()
+        self.split_buttons_into_pages()
+        self.current_page = 0
+        self.add_buttons_to_current_page()
+        self.add_page_switching_buttons()
+        self.hangman_stages = [
             "```\n"
             "   +----+\n"
             "   |    |\n"
@@ -166,82 +166,85 @@ class MyView(discord.ui.View):
             "```",  # 6 wrong
         ]
 
-    def createButtons(self):
+    def create_buttons(self):
         self.buttons = []
         for letter in list(string.ascii_uppercase):
-            buttonCallback = self.createButtonCallback(letter)
+            button_callback = self.create_button_callback(letter)
             button = discord.ui.Button(
                 style=discord.ButtonStyle.green, label=letter, custom_id=letter
             )
-            button.callback = buttonCallback
+            button.callback = button_callback
             self.buttons.append(button)
 
-    def splitButtonsIntoPages(self):
+    def split_buttons_into_pages(self):
         self.pages = [
-            self.buttons[i : i + self.pageSize]
-            for i in range(0, len(self.buttons), self.pageSize)
+            self.buttons[i : i + self.page_size]
+            for i in range(0, len(self.buttons), self.page_size)
         ]
 
-    def createButtonCallback(self, button_id):
+    def create_button_callback(self, button_id):
         # Runs when a letter is pressed to update hangman state
-        async def buttonCallback(interaction):
+        async def button_callback(interaction):
             for item in self.children:
                 if item.custom_id == button_id:
                     item.disabled = True
-                    if not self.guessIsCorrect(button_id):
-                        self.incorrectLetters.append(button_id)
-            if len(self.incorrectLetters) == 6 or self.randomWord == self.revealedWord:
+                    if not self.guess_is_correct(button_id):
+                        self.incorrect_letters.append(button_id)
+            if (
+                len(self.incorrect_letters) == 6
+                or self.random_word == self.revealed_word
+            ):
                 for item in self.children:
                     # Game has ended, disable all buttons
                     item.disabled = True
 
-            await self.updateMessage(interaction, button_id)
+            await self.update_message(interaction, button_id)
 
-        return buttonCallback
+        return button_callback
 
-    def guessIsCorrect(self, guess):
-        correct = guess in self.randomWord
+    def guess_is_correct(self, guess):
+        correct = guess in self.random_word
         if correct:
-            self.revealedWord = "".join(
+            self.revealed_word = "".join(
                 c if c == guess else r
-                for c, r in zip(self.randomWord, self.revealedWord)
+                for c, r in zip(self.random_word, self.revealed_word)
             )
         return correct
 
-    async def updateMessage(self, interaction, button_id):
+    async def update_message(self, interaction, button_id):
         # Create a new embed with the updated information
-        incorrectLettersString = (
+        incorrect_letters_string = (
             "None"
-            if len(self.incorrectLetters) == 0
-            else f"{(', '.join(c for c in self.incorrectLetters))}"
+            if len(self.incorrect_letters) == 0
+            else f"{(', '.join(c for c in self.incorrect_letters))}"
         )
 
         embed = discord.Embed(
             title="Hangman!",
-            description=f"{self.hangmanStages[min(len(self.incorrectLetters), len(self.hangmanStages)-1)]}",
+            description=f"{self.hangman_stages[min(len(self.incorrect_letters), len(self.hangman_stages)-1)]}",
             color=discord.Color.orange(),
         )
         embed.add_field(name="Category", value=f"{self.category}", inline=False)
         embed.add_field(
             name="Incorrect Guesses",
-            value=f"{len(self.incorrectLetters)}/6",
+            value=f"{len(self.incorrect_letters)}/6",
             inline=True,
         )
         embed.add_field(
-            name="Incorrect Letters", value=incorrectLettersString, inline=True
+            name="Incorrect Letters", value=incorrect_letters_string, inline=True
         )
         embed.add_field(
-            name="Word", value=f"```{' '.join(self.revealedWord)}```", inline=False
+            name="Word", value=f"```{' '.join(self.revealed_word)}```", inline=False
         )
 
-        if len(self.incorrectLetters) == 6:
+        if len(self.incorrect_letters) == 6:
             # Game is lost
             embed.add_field(
                 name="Game Lost!",
-                value=f"The word was: {self.randomWord}",
+                value=f"The word was: {self.random_word}",
                 inline=False,
             )
-        elif self.randomWord == self.revealedWord:
+        elif self.random_word == self.revealed_word:
             # Game is won
             embed.add_field(
                 name="Game Won!",
@@ -252,43 +255,43 @@ class MyView(discord.ui.View):
         # Update the message with the new embed
         await interaction.response.edit_message(embed=embed, view=self)
 
-    def addPageSwitchingButtons(self):
-        if self.currentPage > 0:
-            previousButton = discord.ui.Button(
+    def add_page_switching_buttons(self):
+        if self.current_page > 0:
+            previous_button = discord.ui.Button(
                 style=discord.ButtonStyle.blurple,
                 label="Previous",
                 custom_id="previous",
             )
-            previousButton.callback = self.previous_page
-            self.add_item(previousButton)
+            previous_button.callback = self.previous_page
+            self.add_item(previous_button)
 
-        if self.currentPage < len(self.pages) - 1:
-            nextButton = discord.ui.Button(
+        if self.current_page < len(self.pages) - 1:
+            next_button = discord.ui.Button(
                 style=discord.ButtonStyle.blurple, label="Next", custom_id="next"
             )
-            nextButton.callback = self.next_page
-            self.add_item(nextButton)
+            next_button.callback = self.next_page
+            self.add_item(next_button)
 
     async def previous_page(self, interaction):
-        if self.currentPage > 0:
-            self.currentPage -= 1
-            await self.updateView(interaction)
+        if self.current_page > 0:
+            self.current_page -= 1
+            await self.update_view(interaction)
 
     async def next_page(self, interaction):
-        if self.currentPage < len(self.pages) - 1:
-            self.currentPage += 1
-            await self.updateView(interaction)
+        if self.current_page < len(self.pages) - 1:
+            self.current_page += 1
+            await self.update_view(interaction)
 
-    async def updateView(self, interaction):
+    async def update_view(self, interaction):
         self.clear_items()
-        self.addButtonsToCurrentPage()
-        self.addPageSwitchingButtons()
+        self.add_buttons_to_current_page()
+        self.add_page_switching_buttons()
         await interaction.response.edit_message(view=self)
 
-    def addButtonsToCurrentPage(self):
-        for button in self.pages[self.currentPage]:
+    def add_buttons_to_current_page(self):
+        for button in self.pages[self.current_page]:
             self.add_item(button)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(hangmanCog(bot))
+    await bot.add_cog(HangmanCog(bot))
