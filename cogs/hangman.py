@@ -190,7 +190,10 @@ class MyView(discord.ui.View):
                     item.disabled = True
                     if not self.guess_is_correct(button_id):
                         self.incorrect_letters.append(button_id)
-            if len(self.incorrect_letters) == 6 or self.random_word == self.revealed_word:
+            if (
+                len(self.incorrect_letters) == 6
+                or self.random_word == self.revealed_word
+            ):
                 for item in self.children:
                     # Game has ended, disable all buttons
                     item.disabled = True
