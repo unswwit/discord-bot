@@ -33,8 +33,8 @@ async def on_ready():
 @bot.command()
 @commands.guild_only()
 @commands.is_owner()
-async def sync(ctx: Context, guilds: Greedy[discord.Object], botName):
-    if not guilds and botName == BOT_NAME:
+async def sync(ctx: Context, guilds: Greedy[discord.Object], bot_name):
+    if not guilds and bot_name == BOT_NAME:
         print("Syncing command(s)...")
         synced = await bot.tree.sync()
         await ctx.send(f"Synced {len(synced)} command(s) globally!")

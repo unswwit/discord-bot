@@ -6,7 +6,7 @@ import datetime as dt
 from zoneinfo import ZoneInfo
 
 
-class createStudySessionCog(commands.Cog):
+class CreateStudySessionCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -23,12 +23,12 @@ class createStudySessionCog(commands.Cog):
         self, inter: discord.Interaction, date: str, start_time: str, end_time: str
     ):
         timezone = ZoneInfo("Australia/Sydney")
-        dateFormat = "%Y-%m-%d %H:%M"
+        date_format = "%Y-%m-%d %H:%M"
         try:
-            startTime = dt.datetime.strptime(
-                f"{date} {start_time}", dateFormat
+            start_time = dt.datetime.strptime(
+                f"{date} {start_time}", date_format
             ).replace(tzinfo=timezone)
-            endTime = dt.datetime.strptime(f"{date} {end_time}", dateFormat).replace(
+            end_time = dt.datetime.strptime(f"{date} {end_time}", date_format).replace(
                 tzinfo=timezone
             )
         except ValueError:
@@ -40,13 +40,13 @@ class createStudySessionCog(commands.Cog):
             return
 
         # Discord timestamp formatting
-        startString = f"<t:{math.floor(startTime.timestamp())}:F>"
-        endString = f"<t:{math.floor(endTime.timestamp())}:t>"
+        start_string = f"<t:{math.floor(start_time.timestamp())}:F>"
+        end_string = f"<t:{math.floor(end_time.timestamp())}:t>"
 
         id = inter.user.id
 
-        messageContent = f"""
-        **🧡 Study Session! 🧡**\n\n<@{id}> is having a study session on {startString} until {endString} in the WIT Discord Server!\n\nClick the buttons below to RSVP.\n\n
+        message_content = f"""
+        **🧡 Study Session! 🧡**\n\n<@{id}> is having a study session on {start_string} until {end_string} in the WIT Discord Server!\n\nClick the buttons below to RSVP.\n\n
         """
         embed = discord.Embed(
             title=f"Attendees (1):",
@@ -55,37 +55,37 @@ class createStudySessionCog(commands.Cog):
         )
         view = MyView(id)
         await inter.response.send_message(
-            content=messageContent,
+            content=message_content,
             embed=embed,
             view=view,
         )
 
 
 class MyView(discord.ui.View):
-    def __init__(self, creatorId):
+    def __init__(self, creator_id):
         super().__init__(timeout=None)
-        self.attendees = {creatorId}  # initialize set of attendees
+        self.attendees = {creator_id}  # initialize set of attendees
 
     @discord.ui.button(style=discord.ButtonStyle.green, label="Going")
     async def going(self, inter: discord.Interaction, button: discord.ui.Button):
         self.attendees.add(inter.user.id)
-        await self.updateMessage(inter)
+        await self.update_message(inter)
 
     @discord.ui.button(style=discord.ButtonStyle.red, label="Not Going")
-    async def notGoing(self, inter: discord.Interaction, button: discord.ui.Button):
+    async def not_going(self, inter: discord.Interaction, button: discord.ui.Button):
         self.attendees.discard(inter.user.id)
-        await self.updateMessage(inter)
+        await self.update_message(inter)
 
-    async def updateMessage(self, inter: discord.Interaction):
-        attendeesList = "\n".join(f"- <@{attendee}>" for attendee in self.attendees)
+    async def update_message(self, inter: discord.Interaction):
+        attendees_list = "\n".join(f"- <@{attendee}>" for attendee in self.attendees)
 
         embed = discord.Embed(
             title=f"Attendees ({len(self.attendees)}):",
             color=discord.Color.orange(),
-            description=f"\n\n{attendeesList}",
+            description=f"\n\n{attendees_list}",
         )
         await inter.response.edit_message(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(createStudySessionCog(bot))
+    await bot.add_cog(CreateStudySessionCog(bot))
