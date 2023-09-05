@@ -119,7 +119,7 @@ class AskTriviaQuestionsCog(commands.Cog):
 
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{question_txt} \n\n Difficulty: {question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{question_txt} \n\n Difficulty: {question_diff} \n\n Category: {selected_category.name.title().replace('_', ' ')} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.orange(),
         )
 
