@@ -63,7 +63,7 @@ class AskTriviaQuestionsCog(commands.Cog):
             color=discord.Color.orange(),
         )
         embed.add_field(name="Category", value=f"{Category.GENERAL_KNOWLEDGE}", inline=False)
-        embed.add_field(name="Difficulty", value=f"{question_diff}", inline=False)
+        embed.add_field(name="Difficulty", value=f"{question_diff}", inline=True)
         embed.add_field(
             name="Incorrect answers so far: ", value=self.incorrect_answers, inline=True
         )
