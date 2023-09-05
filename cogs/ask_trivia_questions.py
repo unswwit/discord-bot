@@ -62,6 +62,11 @@ class AskTriviaQuestionsCog(commands.Cog):
             description=f"{question_txt} \n\n Difficulty: {question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.orange(),
         )
+        embed.add_field(name="Category", value=f"{Category.GENERAL_KNOWLEDGE}", inline=False)
+        embed.add_field(name="Difficulty", value=f"{question_diff}", inline=False)
+        embed.add_field(
+            name="Incorrect answers so far: ", value=self.incorrect_answers, inline=True
+        )
 
         # changed from self to self.inccorect
         view = MyView(
