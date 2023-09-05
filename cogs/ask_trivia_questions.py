@@ -113,7 +113,6 @@ class AskTriviaQuestionsCog(commands.Cog):
 
         question_txt = question_set.items[0].question
         question_diff = question_set.items[0].difficulty.name.title()
-        #  question_cat = selected_category.name.title()
         choices = question_set.items[0].choices
         answer_indx = question_set.items[0].answer_index
 
