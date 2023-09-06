@@ -59,11 +59,13 @@ class AskTriviaQuestionsCog(commands.Cog):
 
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{question_txt} \n\n Difficulty: {question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{question_txt}",
             color=discord.Color.orange(),
         )
-        embed.add_field(name="Category", value=f"{Category.GENERAL_KNOWLEDGE}", inline=False)
-        embed.add_field(name="Difficulty", value=f"{question_diff}", inline=True)
+        embed.add_field(name="Category",
+                        value=f"General Knowledge", inline=False)
+        embed.add_field(name="Difficulty",
+                        value=f"{question_diff}", inline=True)
         embed.add_field(
             name="Incorrect answers so far: ", value=self.incorrect_answers, inline=True
         )
@@ -159,7 +161,8 @@ class AnswersSelectMenu(discord.ui.Select):
             self.incorrect_answers += 1
             await self.update_message_incorrect(interaction)
 
-        self.answered_users.add(user_id)  # Add the user to the answered users set
+        # Add the user to the answered users set
+        self.answered_users.add(user_id)
 
     async def update_message_incorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
