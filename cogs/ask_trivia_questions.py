@@ -131,7 +131,7 @@ class AskTriviaQuestionsCog(commands.Cog):
             self.incorrect_answers,
             self.answered_users,
             False,
-            selected_category
+            selected_category,
         )
         await inter.followup.send(
             embed=embed,
@@ -178,7 +178,7 @@ class AnswersSelectMenu(discord.ui.Select):
         incorrect_answers,
         answered_users,
         disabled,
-        selected_category 
+        selected_category,
     ):
         self.question_txt = question_txt
         self.question_diff = question_diff
