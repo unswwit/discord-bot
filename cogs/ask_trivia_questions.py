@@ -131,6 +131,7 @@ class AskTriviaQuestionsCog(commands.Cog):
             self.incorrect_answers,
             self.answered_users,
             False,
+            selected_category
         )
         await inter.followup.send(
             embed=embed,
@@ -148,6 +149,7 @@ class MyView(discord.ui.View):
         incorrect_answers,
         answered_users,
         disabled,
+        selected_category,
     ):
         super().__init__(timeout=None)
 
@@ -159,6 +161,7 @@ class MyView(discord.ui.View):
             incorrect_answers,
             answered_users,
             disabled,
+            selected_category,
         )
 
         # add select menu to view
@@ -175,6 +178,7 @@ class AnswersSelectMenu(discord.ui.Select):
         incorrect_answers,
         answered_users,
         disabled,
+        selected_category 
     ):
         self.question_txt = question_txt
         self.question_diff = question_diff
@@ -183,6 +187,7 @@ class AnswersSelectMenu(discord.ui.Select):
         self.answer_indx = answer_indx
         self.incorrect_answers = incorrect_answers
         self.answered_users = answered_users
+        self.selected_category = selected_category
 
         super().__init__(
             placeholder="Select a choice...",
@@ -218,7 +223,7 @@ class AnswersSelectMenu(discord.ui.Select):
     async def update_message_incorrect(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n Category: {self.selected_category.name.title().replace('_', ' ')} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.red(),
         )
         view = MyView(
@@ -228,6 +233,7 @@ class AnswersSelectMenu(discord.ui.Select):
             self.question_diff,
             self.incorrect_answers,
             self.answered_users,
+            self.selected_category,
             False,
         )
         await inter.response.edit_message(embed=embed, view=view)
@@ -235,7 +241,7 @@ class AnswersSelectMenu(discord.ui.Select):
     async def update_message_correct(self, inter: discord.Interaction):
         embed = discord.Embed(
             title=f"Trivia Question!",
-            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrect_answers}",
+            description=f"{self.question_txt} \n\n Difficulty: {self.question_diff} \n\n Category: {self.selected_category.name.title().replace('_', ' ')} \n\n <@{inter.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice} \n\n Incorrect answers so far: {self.incorrect_answers}",
             color=discord.Color.green(),
         )
         view = MyView(
@@ -245,6 +251,7 @@ class AnswersSelectMenu(discord.ui.Select):
             self.question_diff,
             self.incorrect_answers,
             self.answered_users,
+            self.selected_category,
             True,
         )
         await inter.response.edit_message(embed=embed, view=view)
