@@ -80,16 +80,13 @@ class AskTriviaQuestionsCog(commands.Cog):
             app_commands.Choice(name="Entertainment: Books", value=2),
             app_commands.Choice(name="Entertainment: Film", value=3),
             app_commands.Choice(name="Entertainment: Music", value=4),
-            app_commands.Choice(
-                name="Entertainment: Musicals & Theatres", value=5),
+            app_commands.Choice(name="Entertainment: Musicals & Theatres", value=5),
             app_commands.Choice(name="Entertainment: Television", value=6),
             app_commands.Choice(name="Entertainment: Video Games", value=7),
             app_commands.Choice(name="Entertainment: Board Games", value=8),
             app_commands.Choice(name="Entertainment: Comics", value=9),
-            app_commands.Choice(
-                name="Entertainment: Japanese Anime & Manga", value=10),
-            app_commands.Choice(
-                name="Entertainment: Cartoon & Animations", value=11),
+            app_commands.Choice(name="Entertainment: Japanese Anime & Manga", value=10),
+            app_commands.Choice(name="Entertainment: Cartoon & Animations", value=11),
             app_commands.Choice(name="Science: Computers", value=12),
             app_commands.Choice(name="Science: Gadgets", value=13),
             app_commands.Choice(name="Science: Nature", value=14),
@@ -270,8 +267,7 @@ class AnswersSelectMenu(discord.ui.Select):
             value=f"{category_names.get(self.selected_category)}",
             inline=True,
         )
-        embed.add_field(name="Difficulty",
-                        value=f"{self.question_diff}", inline=True)
+        embed.add_field(name="Difficulty", value=f"{self.question_diff}", inline=True)
         embed.add_field(
             name="Incorrect answers so far: ",
             value=f"{self.incorrect_answers}",
@@ -301,8 +297,7 @@ class AnswersSelectMenu(discord.ui.Select):
             value=f"{category_names.get(self.selected_category)}",
             inline=True,
         )
-        embed.add_field(name="Difficulty",
-                        value=f"{self.question_diff}", inline=True)
+        embed.add_field(name="Difficulty", value=f"{self.question_diff}", inline=True)
         embed.add_field(
             name="",
             value=f"<@{interaction.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice}",
