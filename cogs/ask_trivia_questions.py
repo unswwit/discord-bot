@@ -102,7 +102,6 @@ class AskTriviaQuestionsCog(commands.Cog):
             app_commands.Choice(name="Celebrities", value=21),
             app_commands.Choice(name="Animals", value=22),
             app_commands.Choice(name="Vehicles", value=23),
-
         ],
     )
     async def ask_trivia_question(
@@ -154,10 +153,11 @@ class AskTriviaQuestionsCog(commands.Cog):
         embed.add_field(
             name="Category", value=category_names.get(selected_category), inline=True
         )
-        embed.add_field(name="Difficulty",
-                        value=question_diff, inline=True)
+        embed.add_field(name="Difficulty", value=question_diff, inline=True)
         embed.add_field(
-            name="Incorrect answers so far: ", value=self.incorrect_answers, inline=False
+            name="Incorrect answers so far: ",
+            value=self.incorrect_answers,
+            inline=False,
         )
 
         # changed from self to self.incorrect
@@ -266,11 +266,16 @@ class AnswersSelectMenu(discord.ui.Select):
             color=discord.Color.red(),
         )
         embed.add_field(
-            name="Category", value=f"{category_names.get(self.selected_category)}", inline=True)
+            name="Category",
+            value=f"{category_names.get(self.selected_category)}",
+            inline=True,
+        )
         embed.add_field(name="Difficulty",
                         value=f"{self.question_diff}", inline=True)
         embed.add_field(
-            name="Incorrect answers so far: ", value=f"{self.incorrect_answers}", inline=False
+            name="Incorrect answers so far: ",
+            value=f"{self.incorrect_answers}",
+            inline=False,
         )
 
         view = MyView(
@@ -292,15 +297,21 @@ class AnswersSelectMenu(discord.ui.Select):
             color=discord.Color.green(),
         )
         embed.add_field(
-            name="Category", value=f"{category_names.get(self.selected_category)}", inline=True)
+            name="Category",
+            value=f"{category_names.get(self.selected_category)}",
+            inline=True,
+        )
         embed.add_field(name="Difficulty",
                         value=f"{self.question_diff}", inline=True)
         embed.add_field(
             name="",
-            value=f"<@{interaction.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice}", inline=False
+            value=f"<@{interaction.user.id}> was the first to guess correctly! The correct answer was: {self.correct_choice}",
+            inline=False,
         )
         embed.add_field(
-            name="Incorrect answers so far: ", value=f"{self.incorrect_answers}", inline=False
+            name="Incorrect answers so far: ",
+            value=f"{self.incorrect_answers}",
+            inline=False,
         )
 
         view = MyView(
