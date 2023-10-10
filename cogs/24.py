@@ -139,11 +139,10 @@ class TwentyFourCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(
-        name="24", description="Play a game of 24"
-    )
+    @app_commands.command(name="24", description="Play a game of 24")
     async def play_24(
-        self, inter: discord.Interaction,
+        self,
+        inter: discord.Interaction,
     ):
         await inter.response.defer()
 
@@ -159,14 +158,15 @@ class MyView(discord.ui.View):
         self.num4 = random_combination[3]
 
     async def update_message(self, interaction):
-        embed = discord.Embed(
-            title="24",
-            color=discord.Color.orange()
-        )
+        embed = discord.Embed(title="24", color=discord.Color.orange())
         embed.add_field(
-            name="Numbers", value=f"`{self.num1}` `{self.num2}` `{self.num3}` `{self.num4}`", inline=False)
+            name="Numbers",
+            value=f"`{self.num1}` `{self.num2}` `{self.num3}` `{self.num4}`",
+            inline=False,
+        )
 
         await interaction.send(embed=embed)
+
 
 # async def callback(self, interaction: discord.Interaction):
 
