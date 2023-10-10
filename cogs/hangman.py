@@ -76,7 +76,8 @@ class HangmanCog(commands.Cog):
             "```",
             color=discord.Color.orange(),
         )
-        embed.add_field(name="Category", value=f"{category.name}", inline=False)
+        embed.add_field(name="Category",
+                        value=f"{category.name}", inline=False)
         embed.add_field(name="Incorrect Guesses", value="0/6", inline=True)
         embed.add_field(name="Incorrect Letters", value=f"None", inline=True)
         embed.add_field(
@@ -178,7 +179,7 @@ class MyView(discord.ui.View):
 
     def split_buttons_into_pages(self):
         self.pages = [
-            self.buttons[i : i + self.page_size]
+            self.buttons[i: i + self.page_size]
             for i in range(0, len(self.buttons), self.page_size)
         ]
 
@@ -224,7 +225,8 @@ class MyView(discord.ui.View):
             description=f"{self.hangman_stages[min(len(self.incorrect_letters), len(self.hangman_stages)-1)]}",
             color=discord.Color.orange(),
         )
-        embed.add_field(name="Category", value=f"{self.category}", inline=False)
+        embed.add_field(name="Category",
+                        value=f"{self.category}", inline=False)
         embed.add_field(
             name="Incorrect Guesses",
             value=f"{len(self.incorrect_letters)}/6",

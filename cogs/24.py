@@ -12,21 +12,8 @@ from discord import app_commands
 # Correct window
 # Incorrect windowx
 
-
-class TwentyFourCog(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
-
-    @app_commands.command(name="24", description="Play a game of 24")
-    async def play24(
-        self,
-        inter: discord.Interaction,
-    ):
-        await inter.response.defer()
-
-
 # Print random numbers that can be used to create 24
-sumArrays = [
+arrays_24 = [
     [1, 2, 3, 4],
     [1, 2, 3, 5],
     [1, 2, 3, 6],
@@ -147,22 +134,46 @@ sumArrays = [
     [6, 7, 8, 9],
 ]
 
-random_combination = print(random.choice(sumArrays))
-num1 = random_combination[0]
-num2 = random_combination[1]
-num3 = random_combination[2]
-num4 = random_combination[3]
+
+class TwentyFourCog(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+    @app_commands.command(
+        name="24", description="Play a game of 24"
+    )
+    async def play_24(
+        self, inter: discord.Interaction,
+    ):
+        await inter.response.defer()
 
 
-# Setting up 24 game
+class MyView(discord.ui.View):
+    def __init__(self, creator_id):
+        super().__init__(timeout=None)
+        self.creator_id = creator_id
+        random_combination = random.choice(arrays_24)
+        self.num1 = random_combination[0]
+        self.num2 = random_combination[1]
+        self.num3 = random_combination[2]
+        self.num4 = random_combination[3]
 
-# Numpad
-# class NumberInputInterface(discord.ui.View):
+    async def update_message(self, interaction):
+        embed = discord.Embed(
+            title="24",
+            color=discord.Color.orange()
+        )
+        embed.add_field(
+            name="Numbers", value=f"`{self.num1}` `{self.num2}` `{self.num3}` `{self.num4}`", inline=False)
+
+        await interaction.send(embed=embed)
+
 # async def callback(self, interaction: discord.Interaction):
 
 # async def updateMessageIncorrect(self, interaction: discord.Interaction):
 
 # async def updateMessageCorrect(self, interaction: discord.Interaction):
 
-# async def setup(bot: commands.Bot):
-# await bot.add_cog(TwentyFourCog(bot))
+
+async def setup(bot: commands.Bot):
+    await bot.add_cog(TwentyFourCog(bot))
