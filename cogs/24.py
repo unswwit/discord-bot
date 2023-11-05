@@ -12,21 +12,8 @@ from discord import app_commands
 # Correct window
 # Incorrect windowx
 
-
-class TwentyFourCog(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
-
-    @app_commands.command(name="24", description="Play a game of 24")
-    async def play24(
-        self,
-        inter: discord.Interaction,
-    ):
-        await inter.response.defer()
-
-
 # Print random numbers that can be used to create 24
-sumArrays = [
+arrays_24 = [
     [1, 2, 3, 4],
     [1, 2, 3, 5],
     [1, 2, 3, 6],
@@ -147,22 +134,46 @@ sumArrays = [
     [6, 7, 8, 9],
 ]
 
-random_combination = print(random.choice(sumArrays))
-num1 = random_combination[0]
-num2 = random_combination[1]
-num3 = random_combination[2]
-num4 = random_combination[3]
+class TwentyFourCog(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
+    @app_commands.command(name="24", description="Play a game of 24")
+    async def play_24(
+        self,
+        interaction: discord.Interaction,
+    ):
+        await interaction.response.defer()
 
-# Setting up 24 game
+        try:
+            random_combination = random.choice(arrays_24)
+        except Exception as e:
+            await interaction.followup.send(
+                "I can't generate 4 numbers that can make 24, please try again."
+            )
+            return
 
-# Numpad
-# class NumberInputInterface(discord.ui.View):
-# async def callback(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="24", 
+            color=discord.Color.orange()
+        )
 
-# async def updateMessageIncorrect(self, interaction: discord.Interaction):
+        embed.add_field(
+            name="Your numbers are:",
+            value=f"` {random_combination[0]}   {random_combination[1]}   {random_combination[2]}   {random_combination[3]} `",
+            inline=False,
+        )
 
-# async def updateMessageCorrect(self, interaction: discord.Interaction):
+        view = MyView(id)
+        await interaction.followup.send(
+            embed=embed,
+            view=view,
+        )
 
-# async def setup(bot: commands.Bot):
-# await bot.add_cog(TwentyFourCog(bot))
+class MyView(discord.ui.View):
+    def __init__(self, creator_id):
+        super().__init__(timeout=None)
+        self.creator_id = creator_id
+
+async def setup(bot: commands.Bot):
+    await bot.add_cog(TwentyFourCog(bot))
