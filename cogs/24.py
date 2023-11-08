@@ -134,6 +134,7 @@ arrays_24 = [
     [6, 7, 8, 9],
 ]
 
+
 class TwentyFourCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -153,10 +154,7 @@ class TwentyFourCog(commands.Cog):
             )
             return
 
-        embed = discord.Embed(
-            title="24",
-            color=discord.Color.orange()
-        )
+        embed = discord.Embed(title="24", color=discord.Color.orange())
 
         embed.add_field(
             name="Your numbers are:",
@@ -165,11 +163,8 @@ class TwentyFourCog(commands.Cog):
         )
 
         view = MyView(id, random_combination)
-        await interaction.followup.send(
-            embed=embed,
-            view=view,
-            ephemeral=True
-        )
+        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+
 
 class MyView(discord.ui.View):
     def __init__(self, creator_id, numbers):
@@ -209,7 +204,8 @@ class MyView(discord.ui.View):
             button_callback = self.create_button_callback(operation)
             button = discord.ui.Button(
                 style=colour,
-                label=operation, custom_id=operation,
+                label=operation,
+                custom_id=operation,
                 row=cur_row,
             )
             button.callback = button_callback
@@ -224,17 +220,28 @@ class MyView(discord.ui.View):
             if button_id == "⌫" and len(self.current_input) > 1:
                 self.current_input = self.current_input[:-2]
             if button_id == "=":
-                current_input_math = self.current_input.replace("×", "*").replace("÷", "/").replace(" ", "")
+                current_input_math = (
+                    self.current_input.replace("×", "*")
+                    .replace("÷", "/")
+                    .replace(" ", "")
+                )
                 print(eval(current_input_math))
-                current_input_numbers = ''.join(filter(str.isdigit, current_input_math))
+                current_input_numbers = "".join(filter(str.isdigit, current_input_math))
                 if len(current_input_numbers) < 4:
-                    await self.update_message_incorrect(interaction, "You didn't use all the numbers!")
+                    await self.update_message_incorrect(
+                        interaction, "You didn't use all the numbers!"
+                    )
                 if len(current_input_numbers) > 4:
-                    await self.update_message_incorrect(interaction, "You used too many numbers! Be sure to use 1 of each!")
+                    await self.update_message_incorrect(
+                        interaction,
+                        "You used too many numbers! Be sure to use 1 of each!",
+                    )
                 elif eval(current_input_math) == 24:
                     await self.update_message_correct(interaction)
                 elif eval(current_input_math) != 24:
-                    await self.update_message_incorrect(interaction, "Sorry, that's not 24!")
+                    await self.update_message_incorrect(
+                        interaction, "Sorry, that's not 24!"
+                    )
             elif button_id != "⌫" and button_id != "=":
                 # Append the button_id to the current_input
                 self.current_input += button_id + " "
@@ -251,10 +258,7 @@ class MyView(discord.ui.View):
         return button_callback
 
     async def update_message(self, interaction):
-        embed = discord.Embed(
-            title="24",
-            color=discord.Color.orange()
-        )
+        embed = discord.Embed(title="24", color=discord.Color.orange())
 
         embed.add_field(
             name="Your numbers are:",
@@ -269,10 +273,7 @@ class MyView(discord.ui.View):
 
     async def update_message_correct(self, interaction):
         self.clear_items()
-        embed = discord.Embed(
-            title="24",
-            color=discord.Color.green()
-        )
+        embed = discord.Embed(title="24", color=discord.Color.green())
 
         embed.add_field(
             name="Your numbers are:",
@@ -284,17 +285,12 @@ class MyView(discord.ui.View):
             name="Input:", value="`" + self.current_input + "`", inline=False
         )
 
-        embed.add_field(
-            name="", value="Congrats! You made 24!", inline=False
-        )
+        embed.add_field(name="", value="Congrats! You made 24!", inline=False)
 
         await interaction.response.edit_message(embed=embed, view=self)
 
     async def update_message_incorrect(self, interaction, message):
-        embed = discord.Embed(
-            title="24",
-            color=discord.Color.red()
-        )
+        embed = discord.Embed(title="24", color=discord.Color.red())
 
         embed.add_field(
             name="Your numbers are:",
@@ -306,10 +302,9 @@ class MyView(discord.ui.View):
             name="Input:", value="`" + self.current_input + "`", inline=False
         )
 
-        embed.add_field(
-            name="", value=message, inline=False
-        )
+        embed.add_field(name="", value=message, inline=False)
         await interaction.response.edit_message(embed=embed, view=self)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(TwentyFourCog(bot))
