@@ -178,7 +178,7 @@ class MyView(discord.ui.View):
         self.numbers = [str(number) for number in numbers]
         self.buttons = []
         self.create_buttons()
-        self.current_input = ""
+        self.current_input = " "
 
     def create_buttons(self):
         # number buttons
@@ -194,7 +194,7 @@ class MyView(discord.ui.View):
             self.buttons.append(button)
 
         # calculator buttons
-        calculator_operations = ["+", "-", "×", "÷", "(", ")", "="]
+        calculator_operations = ["+", "-", "×", "÷", "(", ")", "=", "⌫"]
         cur_row = 1
         colour = discord.ButtonStyle.grey
         for operation in calculator_operations:
@@ -203,6 +203,8 @@ class MyView(discord.ui.View):
                 cur_row += 1
             elif operation == "=":
                 colour = discord.ButtonStyle.blurple
+            elif operation == "⌫":
+                colour = discord.ButtonStyle.red
 
             button_callback = self.create_button_callback(operation)
             button = discord.ui.Button(
@@ -219,12 +221,30 @@ class MyView(discord.ui.View):
     def create_button_callback(self, button_id):
         # Runs when a button is pressed
         async def button_callback(interaction):
-            self.current_input += " " + button_id
-            for item in self.children:
-                if item.custom_id == button_id:
-                    # disable button if a number
-                    if button_id in self.numbers:
-                        item.disabled = True
+            if button_id == "⌫" and len(self.current_input) > 1:
+                self.current_input = self.current_input[:-2]
+            if button_id == "=":
+                current_input_math = self.current_input.replace("×", "*").replace("÷", "/").replace(" ", "")
+                print(eval(current_input_math))
+                current_input_numbers = ''.join(filter(str.isdigit, current_input_math))
+                if len(current_input_numbers) < 4:
+                    await self.update_message_incorrect(interaction, "You didn't use all the numbers!")
+                if len(current_input_numbers) > 4:
+                    await self.update_message_incorrect(interaction, "You used too many numbers! Be sure to use 1 of each!")
+                elif eval(current_input_math) == 24:
+                    await self.update_message_correct(interaction)
+                elif eval(current_input_math) != 24:
+                    await self.update_message_incorrect(interaction, "Sorry, that's not 24!")
+            elif button_id != "⌫" and button_id != "=":
+                # Append the button_id to the current_input
+                self.current_input += button_id + " "
+
+            # Removing to implement delete button functionality
+            # for item in self.children:
+            #     if item.custom_id == button_id:
+            #         # disable button if a number
+            #         if button_id in self.numbers:
+            #             item.disabled = True
 
             await self.update_message(interaction)
 
@@ -244,6 +264,50 @@ class MyView(discord.ui.View):
 
         embed.add_field(
             name="Input:", value="`" + self.current_input + "`", inline=False
+        )
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    async def update_message_correct(self, interaction):
+        self.clear_items()
+        embed = discord.Embed(
+            title="24",
+            color=discord.Color.green()
+        )
+
+        embed.add_field(
+            name="Your numbers are:",
+            value=f"` {self.numbers[0]}   {self.numbers[1]}   {self.numbers[2]}   {self.numbers[3]} `",
+            inline=False,
+        )
+
+        embed.add_field(
+            name="Input:", value="`" + self.current_input + "`", inline=False
+        )
+
+        embed.add_field(
+            name="", value="Congrats! You made 24!", inline=False
+        )
+
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    async def update_message_incorrect(self, interaction, message):
+        embed = discord.Embed(
+            title="24",
+            color=discord.Color.red()
+        )
+
+        embed.add_field(
+            name="Your numbers are:",
+            value=f"` {self.numbers[0]}   {self.numbers[1]}   {self.numbers[2]}   {self.numbers[3]} `",
+            inline=False,
+        )
+
+        embed.add_field(
+            name="Input:", value="`" + self.current_input + "`", inline=False
+        )
+
+        embed.add_field(
+            name="", value=message, inline=False
         )
         await interaction.response.edit_message(embed=embed, view=self)
 
