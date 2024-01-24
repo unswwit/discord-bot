@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord import app_commands
 from wonderwords import RandomWord
 
+from oweek_ctf import run_ctf
 
 class HangmanCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -90,6 +91,9 @@ class HangmanCog(commands.Cog):
             embed=embed,
             view=view,
         )
+
+        # Run O-Week CTF
+        await run_ctf(inter.user)
 
 
 class MyView(discord.ui.View):

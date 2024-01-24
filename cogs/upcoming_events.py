@@ -4,6 +4,8 @@ from discord.ext import commands
 
 from api import get_next_upcoming_event, get_upcoming_events, get_most_recent_event
 
+from oweek_ctf import run_ctf
+
 EVENT_RECAPS_LINK = "https://unswwit.com/events/event-recaps/"
 
 
@@ -15,29 +17,35 @@ class UpcomingEventsCog(commands.Cog):
         name="next-upcoming-event",
         description="See information about WIT's next upcoming event!",
     )
-    async def next_upcoming_event(self, int: discord.Interaction):
+    async def next_upcoming_event(self, inter: discord.Interaction):
         try:
             next_event_fields = get_next_upcoming_event().fields()
-            await int.response.send_message(
+            await inter.response.send_message(
                 f"**🧡 WIT's next event is *{next_event_fields.get('date')}*! 🧡**\n\n**Event Details:** {next_event_fields.get('title')}\n\n{next_event_fields.get('description')}\n**Event Link: **{next_event_fields.get('facebook_link')}"
             )
         except:
-            await no_events_message(int)
+            await no_events_message(inter)
+
+        # Run O-Week CTF
+        await run_ctf(inter.user)
 
     @app_commands.command(
         name="all-upcoming-events",
         description="See an overview of all of WIT's upcoming events!",
     )
-    async def upcoming_events(self, int: discord.Interaction):
+    async def upcoming_events(self, inter: discord.Interaction):
         upcoming_events = get_upcoming_events()
         if len(upcoming_events) == 0:
-            return await no_events_message(int)
+            return await no_events_message(inter)
 
         overview = "**🧡 WIT's Upcoming Events 🧡**"
         for event in upcoming_events:
             event_fields = event.fields()
             overview += f"\n\n*{event_fields.get('date')}*\n{event_fields.get('title')}: <{event_fields.get('facebook_link')}>"
-        await int.response.send_message(overview)
+        await inter.response.send_message(overview)
+
+        # Run O-Week CTF
+        await run_ctf(inter.user)
 
 
 async def no_events_message(int: discord.Interaction):
