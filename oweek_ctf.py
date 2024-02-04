@@ -7,8 +7,7 @@ MAX_RANDOM = 10
 
 async def run_ctf(user):
     # Generate a random number between 1 and 10
-    # random_number = random.randint(1, MAX_RANDOM)
-    random_number = 7
+    random_number = random.randint(1, MAX_RANDOM)
 
     # Hardcoded winning number
     winning_number = WINNING_NUM
