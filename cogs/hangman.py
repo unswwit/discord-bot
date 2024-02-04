@@ -6,6 +6,7 @@ from wonderwords import RandomWord
 
 from oweek_ctf import run_ctf
 
+
 class HangmanCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot

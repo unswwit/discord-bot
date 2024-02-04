@@ -5,6 +5,7 @@ import random_topic
 
 from oweek_ctf import run_ctf
 
+
 class RandomTopicCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot

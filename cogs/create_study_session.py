@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 
 from oweek_ctf import run_ctf
 
+
 class CreateStudySessionCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot

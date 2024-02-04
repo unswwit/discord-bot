@@ -8,6 +8,7 @@ import aiohttp
 
 from oweek_ctf import run_ctf
 
+
 class RandomPostCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
