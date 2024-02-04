@@ -5,6 +5,8 @@ import math
 import datetime as dt
 from zoneinfo import ZoneInfo
 
+from oweek_ctf import run_ctf
+
 
 class CreateStudySessionCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -59,6 +61,9 @@ class CreateStudySessionCog(commands.Cog):
             embed=embed,
             view=view,
         )
+
+        # Run O-Week CTF
+        await run_ctf(inter.user)
 
 
 class MyView(discord.ui.View):

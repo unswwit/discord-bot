@@ -3,6 +3,8 @@ from discord.ext import commands
 from discord import app_commands
 from pyopentdb import OpenTDBClient, Category, QuestionType, Difficulty
 
+from oweek_ctf import run_ctf
+
 # Define category values
 category_mapping = {
     1: Category.GENERAL_KNOWLEDGE,
@@ -172,6 +174,9 @@ class AskTriviaQuestionsCog(commands.Cog):
             embed=embed,
             view=view,
         )
+
+        # Run O-Week CTF
+        await run_ctf(interaction.user)
 
 
 class MyView(discord.ui.View):
