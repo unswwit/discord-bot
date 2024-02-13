@@ -231,7 +231,7 @@ class MyView(discord.ui.View):
                     await self.update_message_incorrect(
                         interaction, "You didn't use all the numbers!"
                     )
-                if len(current_input_numbers) > 4:
+                elif len(current_input_numbers) > 4:
                     await self.update_message_incorrect(
                         interaction,
                         "You used too many numbers! Be sure to use 1 of each!",
