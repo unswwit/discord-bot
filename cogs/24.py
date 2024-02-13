@@ -219,7 +219,7 @@ class MyView(discord.ui.View):
         async def button_callback(interaction):
             if button_id == "⌫" and len(self.current_input) > 1:
                 self.current_input = self.current_input[:-2]
-            if button_id == "=":
+            elif button_id == "=":
                 current_input_math = (
                     self.current_input.replace("×", "*")
                     .replace("÷", "/")
