@@ -63,7 +63,7 @@ class CreateStudySessionCog(commands.Cog):
         )
 
         # Run O-Week CTF
-        await run_ctf(inter.user)
+        # await run_ctf(inter.user)
 
 
 class MyView(discord.ui.View):

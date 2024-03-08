@@ -22,7 +22,7 @@ class RandomTopicCog(commands.Cog):
         await inter.response.send_message(message)
 
         # Run O-Week CTF
-        await run_ctf(inter.user)
+        # await run_ctf(inter.user)
 
 
 async def setup(bot: commands.Bot):
