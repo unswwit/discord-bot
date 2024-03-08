@@ -20,7 +20,7 @@ class RandomPostCog(commands.Cog):
         await send_post(int, get_random_marketing_post("Monday"))
 
         # Run O-Week CTF
-        await run_ctf(int.user)
+        # await run_ctf(int.user)
 
     @app_commands.command(
         name="random-willow-meme", description="Send a random Willow meme!"
@@ -29,7 +29,7 @@ class RandomPostCog(commands.Cog):
         await send_post(int, get_random_marketing_post("Memes"))
 
         # Run O-Week CTF
-        await run_ctf(int.user)
+        # await run_ctf(int.user)
 
     @app_commands.command(
         name="random-willow-post", description="Send a random Willow post!"
@@ -38,7 +38,7 @@ class RandomPostCog(commands.Cog):
         await send_post(int, get_random_marketing_post("Mascot"))
 
         # Run O-Week CTF
-        await run_ctf(int.user)
+        # await run_ctf(int.user)
 
 
 async def send_post(int: discord.Interaction, randomPost):

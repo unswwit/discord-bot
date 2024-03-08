@@ -45,7 +45,7 @@ class UpcomingEventsCog(commands.Cog):
         await inter.response.send_message(overview)
 
         # Run O-Week CTF
-        await run_ctf(inter.user)
+        # await run_ctf(inter.user)
 
 
 async def no_events_message(int: discord.Interaction):

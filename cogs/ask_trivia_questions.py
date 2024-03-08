@@ -176,7 +176,7 @@ class AskTriviaQuestionsCog(commands.Cog):
         )
 
         # Run O-Week CTF
-        await run_ctf(interaction.user)
+        # await run_ctf(interaction.user)
 
 
 class MyView(discord.ui.View):
