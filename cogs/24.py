@@ -4,14 +4,7 @@ import random
 from discord.ext import commands
 from discord import app_commands
 
-# 24 game
-# /24 to play game
-# Give us 4 random numbers that can make 24
-# Numpad (4x3) of only those 4 numbers, + arithmetic, brackets, equals
-# Clicking equals runs solver command to see if statement makes 24
-# Correct window
-# Incorrect windowx
-
+# TODO: Move arrays_24 to a different file and import it here
 # Print random numbers that can be used to create 24
 arrays_24 = [
     [1, 2, 3, 4],
@@ -154,7 +147,7 @@ class TwentyFourCog(commands.Cog):
             )
             return
 
-        embed = discord.Embed(title="24", color=discord.Color.orange())
+        embed = discord.Embed(title="Make 24!", color=discord.Color.orange())
 
         embed.add_field(
             name="Your numbers are:",
@@ -225,7 +218,6 @@ class MyView(discord.ui.View):
                     .replace("÷", "/")
                     .replace(" ", "")
                 )
-                print(eval(current_input_math))
                 current_input_numbers = "".join(filter(str.isdigit, current_input_math))
                 if len(current_input_numbers) < 4:
                     await self.update_message_incorrect(
@@ -246,19 +238,12 @@ class MyView(discord.ui.View):
                 # Append the button_id to the current_input
                 self.current_input += button_id + " "
 
-            # Removing to implement delete button functionality
-            # for item in self.children:
-            #     if item.custom_id == button_id:
-            #         # disable button if a number
-            #         if button_id in self.numbers:
-            #             item.disabled = True
-
             await self.update_message(interaction)
 
         return button_callback
 
     async def update_message(self, interaction):
-        embed = discord.Embed(title="24", color=discord.Color.orange())
+        embed = discord.Embed(title="Make 24!", color=discord.Color.orange())
 
         embed.add_field(
             name="Your numbers are:",
@@ -273,7 +258,7 @@ class MyView(discord.ui.View):
 
     async def update_message_correct(self, interaction):
         self.clear_items()
-        embed = discord.Embed(title="24", color=discord.Color.green())
+        embed = discord.Embed(title="Make 24!", color=discord.Color.green())
 
         embed.add_field(
             name="Your numbers are:",
@@ -285,12 +270,13 @@ class MyView(discord.ui.View):
             name="Input:", value="`" + self.current_input + "`", inline=False
         )
 
-        embed.add_field(name="", value="Congrats! You made 24!", inline=False)
+        # TODO: fill value with winner's name (e.g., USER was the first to make 24!)
+        embed.add_field(name="Congrats! You made 24!", value="", inline=False)
 
         await interaction.response.edit_message(embed=embed, view=self)
 
     async def update_message_incorrect(self, interaction, message):
-        embed = discord.Embed(title="24", color=discord.Color.red())
+        embed = discord.Embed(title="Make 24!", color=discord.Color.red())
 
         embed.add_field(
             name="Your numbers are:",
