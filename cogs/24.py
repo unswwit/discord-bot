@@ -1,6 +1,7 @@
 import discord
 import math
 import random
+import asyncio
 from discord.ext import commands
 from discord import app_commands
 
@@ -277,6 +278,7 @@ class MyView(discord.ui.View):
         embed = self.repeatEmbed(discord.Color.red())
 
         embed.add_field(name="", value=message, inline=False)
+
         await interaction.response.edit_message(embed=embed, view=self)
     
 
