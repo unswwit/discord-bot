@@ -1,3 +1,6 @@
+
+
+import re
 import discord
 import math
 import random
@@ -208,9 +211,30 @@ class MyView(discord.ui.View):
         for button in self.buttons:
             self.add_item(button)
 
-
-
     def create_button_callback(self, button_id):
+        def isBalanced(myStr):
+            open_list = ["("]
+            close_list = [")"]
+            stack = []
+            for i in myStr:
+                if i in open_list:
+                    stack.append(i)
+                elif i in close_list:
+                    pos = close_list.index(i)
+                    if ((len(stack) > 0) and
+                        (open_list[pos] == stack[len(stack)-1])):
+                        stack.pop()
+                    else:
+                        return False
+            if len(stack) == 0:
+                return True
+            else:
+                return False
+
+        def rightOrder(str):
+            str.replace("(", "").replace(")", "")
+            return re.match("/^\d[\+\-\*\/]\d[\+\-\*\/]\d[\+\-\*\/]\d$/", str)
+
         # Runs when a button is pressed
         async def button_callback(interaction):
             if button_id == "⌫" and len(self.current_input) > 1:
@@ -231,6 +255,14 @@ class MyView(discord.ui.View):
                         interaction,
                         "You used too many numbers! Be sure to use 1 of each!",
                     )
+                elif isBalanced(current_input_math) is False:
+                    await self.update_message_incorrect(
+                        interaction, "Brackets are not balanced!"
+                    ) 
+                elif rightOrder(current_input_math) is None:
+                    await self.update_message_incorrect(
+                        interaction, "Something wrong w your order miss"
+                    ) 
                 elif eval(current_input_math) == 24:
                     await self.update_message_correct(interaction)
                 elif eval(current_input_math) != 24:
