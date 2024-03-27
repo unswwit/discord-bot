@@ -10,6 +10,7 @@ from arrayFor24 import arrays_24
 # TODO: Move arrays_24 to a different file and import it here
 # Print random numbers that can be used to create 24
 
+
 class TwentyFourCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -99,8 +100,7 @@ class MyView(discord.ui.View):
                     stack.append(i)
                 elif i in close_list:
                     pos = close_list.index(i)
-                    if ((len(stack) > 0) and
-                        (open_list[pos] == stack[len(stack)-1])):
+                    if (len(stack) > 0) and (open_list[pos] == stack[len(stack) - 1]):
                         stack.pop()
                     else:
                         return False
@@ -110,7 +110,10 @@ class MyView(discord.ui.View):
                 return False
 
         def rightOrder(str):
-            return re.match("\d[*\+\-\/]\d[\+\-\*\/]\d[\+\-\*\/]\d", str.replace("(", "").replace(")", ""))
+            return re.match(
+                "\d[*\+\-\/]\d[\+\-\*\/]\d[\+\-\*\/]\d",
+                str.replace("(", "").replace(")", ""),
+            )
 
         # Runs when a button is pressed
         async def button_callback(interaction):
@@ -137,12 +140,12 @@ class MyView(discord.ui.View):
                 elif isBalanced(current_input_math) is False:
                     await self.update_message_incorrect(
                         interaction, "Brackets are not balanced!"
-                    ) 
+                    )
                     return
                 elif rightOrder(current_input_math) is None:
                     await self.update_message_incorrect(
                         interaction, "Something wrong w your order miss"
-                    ) 
+                    )
                     return
                 elif eval(current_input_math) == 24:
                     await self.update_message_correct(interaction)
@@ -150,7 +153,7 @@ class MyView(discord.ui.View):
                 elif eval(current_input_math) != 24:
                     await self.update_message_incorrect(
                         interaction, "Sorry, that's not 24!"
-                    ) 
+                    )
                     return
             elif button_id != "⌫" and button_id != "=":
                 # Append the button_id to the current_input
@@ -159,9 +162,9 @@ class MyView(discord.ui.View):
             await self.update_message(interaction)
 
         return button_callback
-    
+
     def repeatEmbed(self, color):
-        embed = discord.Embed(title = "Make 24!", color = color)
+        embed = discord.Embed(title="Make 24!", color=color)
 
         embed.add_field(
             name="Your numbers are:",
@@ -177,7 +180,7 @@ class MyView(discord.ui.View):
 
     async def update_message(self, interaction):
         embed = self.repeatEmbed(discord.Color.orange())
-        
+
         await interaction.response.edit_message(embed=embed, view=self)
 
     async def update_message_correct(self, interaction):
@@ -188,7 +191,6 @@ class MyView(discord.ui.View):
         embed.add_field(name="Congrats! You made 24!", value="", inline=False)
 
         await interaction.response.edit_message(embed=embed, view=self)
-    
 
     async def update_message_incorrect(self, interaction, message):
         embed = self.repeatEmbed(discord.Color.red())
@@ -196,8 +198,7 @@ class MyView(discord.ui.View):
         embed.add_field(name="", value=message, inline=False)
 
         await interaction.response.edit_message(embed=embed, view=self)
-        
-    
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(TwentyFourCog(bot))
