@@ -1,5 +1,3 @@
-
-
 import re
 import discord
 import math
@@ -7,130 +5,10 @@ import random
 import asyncio
 from discord.ext import commands
 from discord import app_commands
+from arrayFor24 import arrays_24
 
 # TODO: Move arrays_24 to a different file and import it here
 # Print random numbers that can be used to create 24
-arrays_24 = [
-    [1, 2, 3, 4],
-    [1, 2, 3, 5],
-    [1, 2, 3, 6],
-    [1, 2, 3, 7],
-    [1, 2, 3, 8],
-    [1, 2, 3, 9],
-    [1, 2, 4, 5],
-    [1, 2, 4, 6],
-    [1, 2, 4, 7],
-    [1, 2, 4, 8],
-    [1, 2, 4, 9],
-    [1, 2, 5, 6],
-    [1, 2, 5, 7],
-    [1, 2, 5, 8],
-    [1, 2, 5, 9],
-    [1, 2, 6, 7],
-    [1, 2, 6, 8],
-    [1, 2, 6, 9],
-    [1, 2, 7, 9],
-    [1, 2, 8, 9],
-    [1, 3, 4, 5],
-    [1, 3, 4, 6],
-    [1, 3, 4, 7],
-    [1, 3, 4, 8],
-    [1, 3, 4, 9],
-    [1, 3, 5, 6],
-    [1, 3, 5, 7],
-    [1, 3, 5, 8],
-    [1, 3, 5, 9],
-    [1, 3, 6, 9],
-    [1, 3, 7, 8],
-    [1, 3, 7, 9],
-    [1, 3, 8, 9],
-    [1, 4, 5, 6],
-    [1, 4, 5, 7],
-    [1, 4, 5, 8],
-    [1, 4, 5, 9],
-    [1, 4, 6, 7],
-    [1, 4, 6, 8],
-    [1, 4, 6, 9],
-    [1, 4, 7, 8],
-    [1, 4, 7, 9],
-    [1, 4, 8, 9],
-    [1, 5, 6, 7],
-    [1, 5, 6, 8],
-    [1, 5, 6, 9],
-    [1, 5, 7, 8],
-    [1, 5, 7, 9],
-    [1, 5, 8, 9],
-    [1, 6, 7, 9],
-    [1, 6, 8, 9],
-    [1, 7, 8, 9],
-    [2, 3, 4, 5],
-    [2, 3, 4, 6],
-    [2, 3, 4, 7],
-    [2, 3, 4, 8],
-    [2, 3, 4, 9],
-    [2, 3, 5, 6],
-    [2, 3, 5, 7],
-    [2, 3, 5, 8],
-    [2, 3, 5, 9],
-    [2, 3, 6, 7],
-    [2, 3, 6, 8],
-    [2, 3, 6, 9],
-    [2, 3, 7, 8],
-    [2, 3, 7, 9],
-    [2, 4, 5, 6],
-    [2, 4, 5, 7],
-    [2, 4, 5, 8],
-    [2, 4, 5, 9],
-    [2, 4, 6, 7],
-    [2, 4, 6, 8],
-    [2, 4, 6, 9],
-    [2, 4, 7, 8],
-    [2, 4, 7, 9],
-    [2, 4, 8, 9],
-    [2, 5, 6, 7],
-    [2, 5, 6, 8],
-    [2, 5, 6, 9],
-    [2, 5, 7, 8],
-    [2, 5, 7, 9],
-    [2, 5, 8, 9],
-    [2, 6, 7, 8],
-    [2, 6, 7, 9],
-    [2, 6, 8, 9],
-    [2, 7, 8, 9],
-    [3, 4, 5, 6],
-    [3, 4, 5, 7],
-    [3, 4, 5, 8],
-    [3, 4, 5, 9],
-    [3, 4, 6, 8],
-    [3, 4, 6, 9],
-    [3, 4, 7, 8],
-    [3, 4, 7, 9],
-    [3, 4, 8, 9],
-    [3, 5, 6, 7],
-    [3, 5, 6, 8],
-    [3, 5, 6, 9],
-    [3, 5, 7, 8],
-    [3, 5, 7, 9],
-    [3, 5, 8, 9],
-    [3, 6, 7, 8],
-    [3, 6, 7, 9],
-    [3, 6, 8, 9],
-    [3, 7, 8, 9],
-    [4, 5, 6, 7],
-    [4, 5, 6, 8],
-    [4, 5, 6, 9],
-    [4, 5, 7, 8],
-    [4, 5, 7, 9],
-    [4, 6, 7, 8],
-    [4, 6, 7, 9],
-    [4, 6, 8, 9],
-    [4, 7, 8, 9],
-    [5, 6, 7, 8],
-    [5, 6, 7, 9],
-    [5, 6, 8, 9],
-    [6, 7, 8, 9],
-]
-
 
 class TwentyFourCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -232,8 +110,7 @@ class MyView(discord.ui.View):
                 return False
 
         def rightOrder(str):
-            str.replace("(", "").replace(")", "")
-            return re.match("/^\d[\+\-\*\/]\d[\+\-\*\/]\d[\+\-\*\/]\d$/", str)
+            return re.match("\d[*\+\-\/]\d[\+\-\*\/]\d[\+\-\*\/]\d", str.replace("(", "").replace(")", ""))
 
         # Runs when a button is pressed
         async def button_callback(interaction):
@@ -250,25 +127,31 @@ class MyView(discord.ui.View):
                     await self.update_message_incorrect(
                         interaction, "You didn't use all the numbers!"
                     )
+                    return
                 elif len(current_input_numbers) > 4:
                     await self.update_message_incorrect(
                         interaction,
                         "You used too many numbers! Be sure to use 1 of each!",
                     )
+                    return
                 elif isBalanced(current_input_math) is False:
                     await self.update_message_incorrect(
                         interaction, "Brackets are not balanced!"
                     ) 
+                    return
                 elif rightOrder(current_input_math) is None:
                     await self.update_message_incorrect(
                         interaction, "Something wrong w your order miss"
                     ) 
+                    return
                 elif eval(current_input_math) == 24:
                     await self.update_message_correct(interaction)
+                    return
                 elif eval(current_input_math) != 24:
                     await self.update_message_incorrect(
                         interaction, "Sorry, that's not 24!"
                     ) 
+                    return
             elif button_id != "⌫" and button_id != "=":
                 # Append the button_id to the current_input
                 self.current_input += button_id + " "
@@ -294,7 +177,7 @@ class MyView(discord.ui.View):
 
     async def update_message(self, interaction):
         embed = self.repeatEmbed(discord.Color.orange())
-
+        
         await interaction.response.edit_message(embed=embed, view=self)
 
     async def update_message_correct(self, interaction):
@@ -305,6 +188,7 @@ class MyView(discord.ui.View):
         embed.add_field(name="Congrats! You made 24!", value="", inline=False)
 
         await interaction.response.edit_message(embed=embed, view=self)
+    
 
     async def update_message_incorrect(self, interaction, message):
         embed = self.repeatEmbed(discord.Color.red())
@@ -312,6 +196,7 @@ class MyView(discord.ui.View):
         embed.add_field(name="", value=message, inline=False)
 
         await interaction.response.edit_message(embed=embed, view=self)
+        
     
 
 async def setup(bot: commands.Bot):
