@@ -6,6 +6,8 @@ from api import get_random_marketing_post
 import io
 import aiohttp
 
+from oweek_ctf import run_ctf
+
 
 class RandomPostCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -17,17 +19,26 @@ class RandomPostCog(commands.Cog):
     async def send_random_motivation(self, int: discord.Interaction):
         await send_post(int, get_random_marketing_post("Monday"))
 
+        # Run O-Week CTF
+        # await run_ctf(int.user)
+
     @app_commands.command(
         name="random-willow-meme", description="Send a random Willow meme!"
     )
     async def sendRandomMeme(self, int: discord.Interaction):
         await send_post(int, get_random_marketing_post("Memes"))
 
+        # Run O-Week CTF
+        # await run_ctf(int.user)
+
     @app_commands.command(
         name="random-willow-post", description="Send a random Willow post!"
     )
     async def sendRandomWillow(self, int: discord.Interaction):
         await send_post(int, get_random_marketing_post("Mascot"))
+
+        # Run O-Week CTF
+        # await run_ctf(int.user)
 
 
 async def send_post(int: discord.Interaction, randomPost):
