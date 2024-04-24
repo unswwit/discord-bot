@@ -36,13 +36,12 @@ class RandomResourceCog(commands.Cog):
         
         print(resource)
 
-        message = f"**{resource_type.capitalize()} Recommendation\n**Name: {resource_title}\nLink: {link}"
-        await int.response.send_message(message)
-       # except:
-          
-          #  await int.response.send_message("Sorry, no posts yet!")
+        try: 
+            message = f"**{resource_type.capitalize()} Recommendation\n**Name: {resource_title}\nLink: {link}"
+            await int.response.send_message(message)
+        except:
+            await int.response.send_message("Sorry, no posts yet!")
 
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(RandomResourceCog(bot))
-
