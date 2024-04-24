@@ -5,6 +5,7 @@ import random
 
 from api import get_random_resource
 
+
 class RandomResourceCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -12,7 +13,6 @@ class RandomResourceCog(commands.Cog):
     @app_commands.command(
         name="random-resource", description="Send a random WIT resource!"
     )
-
     async def send_random_resource(self, int: discord.Interaction):
         link_format = "https://unswwit.com/media/"
         link = ""
@@ -33,10 +33,10 @@ class RandomResourceCog(commands.Cog):
             resource = random.choice(resources[resource_type]).fields()
             link = resource["link"]
             resource_title = resource["title"]
-        
+
         print(resource)
 
-        try: 
+        try:
             message = f"**{resource_type.capitalize()} Recommendation\n**Name: {resource_title}\nLink: {link}"
             await int.response.send_message(message)
         except:
