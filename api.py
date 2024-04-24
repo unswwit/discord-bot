@@ -49,8 +49,14 @@ def get_most_recent_event():
 
 def get_random_resource():
     resources = {
-        "publication": client.entries({"content_type": "publications", "order": "fields.index"}),
-        "blog": client.entries({"content_type": "blogRecommendations", "order": "fields.blogNo"}),
-        "podcast": client.entries({"content_type": "podcastEpisode", "order": "fields.link"})
+        "publication": client.entries(
+            {"content_type": "publications", "order": "fields.index"}
+        ),
+        "blog": client.entries(
+            {"content_type": "blogRecommendations", "order": "fields.blogNo"}
+        ),
+        "podcast": client.entries(
+            {"content_type": "podcastEpisode", "order": "fields.link"}
+        ),
     }
     return resources
