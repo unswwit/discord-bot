@@ -3,7 +3,9 @@ from discord import app_commands
 from discord.ext import commands
 import random
 
-from api import get_random_resource
+from api import get_media_resources
+
+MEDIA_LINK = "https://unswwit.com/media/"
 
 
 class RandomResourceCog(commands.Cog):
@@ -14,27 +16,21 @@ class RandomResourceCog(commands.Cog):
         name="random-resource", description="Send a random WIT resource!"
     )
     async def send_random_resource(self, int: discord.Interaction):
-        link_format = "https://unswwit.com/media/"
         link = ""
-        resources = get_random_resource()
+        resources = get_media_resources()
         resource_type = random.choice(list(resources.keys()))
-        resource = None
+        resource = random.choice(resources[resource_type]).fields()
         resource_title = ""
 
         if resource_type == "publication":
-            resource = random.choice(resources[resource_type]).fields()
-            link = f"{link_format}{resource_type}/{resource['index']}"
+            link = f"{MEDIA_LINK}{resource_type}/{resource['index']}"
             resource_title = resource["heading"]
         elif resource_type == "blog":
-            resource = random.choice(resources[resource_type]).fields()
-            link = f"{link_format}{resource_type}/{resource['index']}"
+            link = f"{MEDIA_LINK}{resource_type}/{resource['index']}"
             resource_title = resource["title"]
         elif resource_type == "podcast":
-            resource = random.choice(resources[resource_type]).fields()
             link = resource["link"]
             resource_title = resource["title"]
-
-        print(resource)
 
         try:
             message = f"**{resource_type.capitalize()} Recommendation\n**Name: {resource_title}\nLink: {link}"

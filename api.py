@@ -47,7 +47,7 @@ def get_most_recent_event():
     return past_events[0]
 
 
-def get_random_resource():
+def get_media_resources():
     resources = {
         "publication": client.entries(
             {"content_type": "publications", "order": "fields.index"}
