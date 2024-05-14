@@ -45,3 +45,18 @@ def get_most_recent_event():
         {"content_type": "pastEvents", "limit": 1, "order": "-fields.index"}
     )
     return past_events[0]
+
+
+def get_media_resources():
+    resources = {
+        "publication": client.entries(
+            {"content_type": "publications", "order": "fields.index"}
+        ),
+        "blog": client.entries(
+            {"content_type": "blogRecommendations", "order": "fields.blogNo"}
+        ),
+        "podcast": client.entries(
+            {"content_type": "podcastEpisode", "order": "fields.link"}
+        ),
+    }
+    return resources
