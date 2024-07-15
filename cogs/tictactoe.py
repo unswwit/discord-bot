@@ -15,10 +15,6 @@ class TicTacToeCog(commands.Cog):
         view = TicTacToe()
         await inter.response.send_message(view=view)
 
-    # async def on_ready(self):
-    #     print(f'Logged in as {self.user} (ID: {self.user.id})')
-    #     print('------')
-
 # Defines a custom button that contains the logic of the game.
 # The ['TicTacToe'] bit is for type hinting purposes to tell your IDE or linter
 # what the type of `self.view` is. It is not required.
@@ -70,7 +66,6 @@ class TicTacToeButton(discord.ui.Button["TicTacToe"]):
             view.stop()
 
         await interaction.response.edit_message(content=content, view=view)
-
 
 # This is our actual board View
 class TicTacToe(discord.ui.View):
@@ -135,13 +130,3 @@ class TicTacToe(discord.ui.View):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(TicTacToeCog(bot))
-
-# bot = TicTacToeBot()
-
-# @bot.command()
-# async def tic(ctx: commands.Context):
-#     """Starts a tic-tac-toe game with yourself."""
-#     await ctx.send('Tic Tac Toe: X goes first', view=TicTacToe())
-
-
-# bot.run(TOKEN)
