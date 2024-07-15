@@ -1,17 +1,28 @@
 from typing import List
-from discord.ext import commands
 import discord
 from discord import app_commands
+from discord.ext import commands
+
+class TicTacToeCog(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+    @app_commands.command(
+        name="play-tictactoe", description="Play Tic-Tac-Toe Game!"
+    )
+    async def play_tictactoe(self, inter: discord.Interaction,):
+        """Starts a tic-tac-toe game with yourself."""
+        view = TicTacToe()
+        await inter.response.send_message(view=view)
+
+    # async def on_ready(self):
+    #     print(f'Logged in as {self.user} (ID: {self.user.id})')
+    #     print('------')
 
 # Defines a custom button that contains the logic of the game.
 # The ['TicTacToe'] bit is for type hinting purposes to tell your IDE or linter
 # what the type of `self.view` is. It is not required.
-class TicTacToeButton(commands.Cog):
-
-    @app_commands.command(
-        name="play-tic-tac-toe",
-        description="play tic tac toe game",
-    )
+class TicTacToeButton(discord.ui.Button["TicTacToe"]):
 
     def __init__(self, x: int, y: int):
         # A label is required, but we don't need one so a zero-width space is used
@@ -122,26 +133,15 @@ class TicTacToe(discord.ui.View):
 
         return None
 
+async def setup(bot: commands.Bot):
+    await bot.add_cog(TicTacToeCog(bot))
 
-class TicTacToeBot(commands.Bot):
-    def __init__(self):
-        intents = discord.Intents.default()
-        intents.message_content = True
+# bot = TicTacToeBot()
 
-        super().__init__(command_prefix=commands.when_mentioned_or('$'), intents=intents)
-
-    async def on_ready(self):
-        print(f'Logged in as {self.user} (ID: {self.user.id})')
-        print('------')
+# @bot.command()
+# async def tic(ctx: commands.Context):
+#     """Starts a tic-tac-toe game with yourself."""
+#     await ctx.send('Tic Tac Toe: X goes first', view=TicTacToe())
 
 
-bot = TicTacToeBot()
-
-
-@bot.command()
-async def tic(ctx: commands.Context):
-    """Starts a tic-tac-toe game with yourself."""
-    await ctx.send('Tic Tac Toe: X goes first', view=TicTacToe())
-
-
-bot.run()
+# bot.run(TOKEN)
