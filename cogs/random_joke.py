@@ -10,10 +10,7 @@ class RandomJokeCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(
-            name="random-joke", description="Tell a random joke!"
-    )
-    
+    @app_commands.command(name="random-joke", description="Tell a random joke!")
     async def send_random_joke(self, inter: discord.Interaction):
         response = requests.get(link)
         if response.status_code == 200:
