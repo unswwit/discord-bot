@@ -1,4 +1,4 @@
-shape_list = [
+shapes_list = [
     {"name": "Triangle!"},
     {"name": "Square!"},
     {"name": "Rectangle!"},
