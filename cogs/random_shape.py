@@ -12,7 +12,7 @@ class RandomShapeGenerate(commands.Cog):
     )
     async def send_random_object(self, inter: discord.Interaction):
         random_shape = random.choice(shapes_list)
-        await inter.response.send_message(random_shape)
+        await inter.response.send_message(random_shape["name"])
         
 async def setup(bot: commands.Bot):
     await bot.add_cog(RandomShapeGenerate(bot))
