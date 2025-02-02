@@ -153,9 +153,10 @@ def generate_random_shape():
         
     # Save the image
     img.save("random_shape.png")
-    img.show()  # Display the image
 
-    print(f"A random {shape_type} has been generated and saved as 'random_shape.png'.")
+    # Show the generated shape
+    # img.show()  # Display the image
+    # print(f"A random {shape_type} has been generated and saved as 'random_shape.png'.")
 
-# Generate and save the random shape
-generate_random_shape()
+# # Generate and save the random shape
+# generate_random_shape()
