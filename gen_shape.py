@@ -4,9 +4,8 @@ from PIL import Image, ImageDraw
 # Constants for image size
 IMAGE_SIZE = (400, 400)
 SHAPES = [
-    'circle', 'square', 'triangle', 'rectangle', 'waterbottle', 'apple',
-    'semicircle', 'trapezium', 'hexagon', 'rhombus', 'cat', 'laptop',
-    'scales', 'dip', 'bird', 'hourglass', 'skyline', 'river', 'butterfly', 'slinky'
+    'circle', 'square', 'triangle', 'rectangle', 'semicircle', 'trapezium', 'hexagon', 
+    'rhombus', 'dip', 'bird', 'hourglass', 'skyline', 'river', 'butterfly'
 ]
 
 # Function to generate random shape
@@ -38,16 +37,6 @@ async def generate_random_shape(user):
         # Draw a rectangle
         draw.rectangle([x - 50, y, x + size * 1.5 - 50, y + size], outline="black", width=5)
 
-    elif shape_type == 'waterbottle':
-        # Waterbottle shape (simplified representation)
-        draw.rectangle([x + 40, y + 40, x + size - 40, y + size], outline="black", width=5)  # Bottle body
-        draw.ellipse([x, y, x + size, y + 40], outline="black", width=5)  # Bottle cap
-
-    elif shape_type == 'apple':
-        # Apple shape (simplified)
-        draw.ellipse([x, y, x + size, y + size], outline="black", width=5)  # Apple body
-        draw.rectangle([x + size / 2 - 10, y - 20, x + size / 2 + 10, y], outline="black", width=5)  # Stem
-
     elif shape_type == 'semicircle':
         # Semi-Circle
         draw.arc([x, y, x + size, y + size], start=0, end=180, fill="black", width=5) 
@@ -72,25 +61,6 @@ async def generate_random_shape(user):
         # Rhombus shape
         y += 50
         draw.polygon([x, y, x + size / 2, y - size / 2, x + size, y, x + size / 2, y + size / 2, x, y], outline="black", width=5)
-
-    elif shape_type == 'cat':
-        # Cat shape (simplified)
-        draw.ellipse([x, y, x + size, y + size], outline="black", width=5)  # Cat face
-        draw.rectangle([x + size / 3, y + size / 2, x + size * 2 / 3, y + size], outline="black", width=5)  # Cat body
-
-    elif shape_type == 'laptop':
-        # Laptop shape (simplified)
-        draw.rectangle([x, y + 40, x + size, y + size], outline="black", width=5)  # Laptop screen
-        draw.rectangle([x + 50, y + size, x + size - 50, y + size + 30], outline="black", width=5)  # Laptop body
-
-    elif shape_type == 'scales':
-        # River shape (simplified with four arcs facing left in a vertical line)
-        arc_height = 30  # Height of each arc
-        arc_width = 50   # Width of each arc
-        # Draw the four arcs facing left, one below the other
-        for i in range(4):
-            draw.arc([x, y + i * arc_height, x + arc_width, y + (i + 1) * arc_height], 
-                    start=270, end=90, fill="black", width=5)
             
     elif shape_type == 'dip':
         # Arc with two horizontal lines at the top end
@@ -145,17 +115,6 @@ async def generate_random_shape(user):
         draw.arc([x, y, x + size, y + size], start=90, end=270, fill="black", width=5)
         # Draw the second semicircle
         draw.arc([x, y + size, x + size, y + size * 2], start=270, end=90, fill="black", width=5)
-
-    elif shape_type == 'slinky': 
-        # Define initial positions and size for the ellipses
-        x, y = 100, 150
-        width, height = 50, 100
-        num_ellipses = 4  # Number of overlapping ellipses
-
-        # Draw overlapping ellipses to create a slinky effect
-        for i in range(num_ellipses):
-            # Adjust the y-position for each ellipse to create overlap
-            draw.ellipse([x + i * 30, y, x + i * 30 + width, y + height], outline="black", width=5)
         
     # Save the image
     img.save("random_shape.png")
