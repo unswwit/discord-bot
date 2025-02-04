@@ -1,20 +1,27 @@
+import discord
 import random
 from PIL import Image, ImageDraw
 
+# Constants for image size
+IMAGE_SIZE = (400, 400)
+SHAPES = [
+    'circle', 'square', 'triangle', 'rectangle', 'waterbottle', 'apple',
+    'semicircle', 'trapezium', 'hexagon', 'rhombus', 'cat', 'laptop',
+    'scales', 'dip', 'bird', 'hourglass', 'skyline', 'river', 'butterfly', 'slinky'
+]
+
 # Function to generate random shape
-def generate_random_shape():
+async def generate_random_shape(user):
     # Create a blank image with white background
-    img = Image.new("RGB", (400, 400), "white")
+    img = Image.new("RGB", IMAGE_SIZE, "white")
     draw = ImageDraw.Draw(img)
 
-    # Randomize the shape to draw (circle, square, triangle, etc.)
-    shape_type = random.choice([
-        'circle', 'square', 'triangle', 'rectangle', 'waterbottle', 'apple', 'semicircle', 'trapezium', 'hexagon', 'rhombus', 'cat', 'laptop', 'scales', 'dip', 'bird', 'hourglass', 'skyline', 'river', 'butterfly', 'slinky'
-    ])
+    # Randomize the shape to draw 
+    shape_type = random.choice(SHAPES)
 
-    # Set the coordinates and size
+    # size and starting position of the shape
     size = 200
-    x, y = 100, 100  # Starting position of the shape
+    x, y = 100, 100  
 
     if shape_type == 'circle':
         # Draw a circle
@@ -154,9 +161,21 @@ def generate_random_shape():
     # Save the image
     img.save("random_shape.png")
 
-    # Show the generated shape
+    # Notify the user with the shape type
+    await user.send(
+        f"🎨 A random shape has been generated for you! "
+        "Use this as a starting point to doodle your version and create a story. "
+        "Finish by giving your doodle an innovative caption or title and share it at the UNSW WIT booth!"
+    )
+
+    # Attach the image to the Discord message
+    with open("random_shape.png", "rb") as file:
+        await user.send(file=discord.File(file, filename="random_shape.png"))
+
+
+    # Show the generated shape (Test)
     # img.show()  # Display the image
     # print(f"A random {shape_type} has been generated and saved as 'random_shape.png'.")
 
-# # Generate and save the random shape
+# # Generate and save the random shape (Test)
 # generate_random_shape()
