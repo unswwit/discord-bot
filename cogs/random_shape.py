@@ -20,7 +20,7 @@ class RandomShapeGenerate(commands.Cog):
         # Send a message with the shape directly in the same channel
         with open("random_shape.png", "rb") as file:
             await inter.response.send_message(
-                f"A random shape has been generated for you!",
+                f"A random shape has been generated.",
                 file=discord.File(file, filename="random_shape.png")
             )
         
