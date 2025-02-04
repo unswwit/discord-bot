@@ -1,4 +1,3 @@
-import discord
 import random
 from PIL import Image, ImageDraw
 
@@ -160,22 +159,3 @@ async def generate_random_shape(user):
         
     # Save the image
     img.save("random_shape.png")
-
-    # Notify the user with the shape type
-    await user.send(
-        f"🎨 A random shape has been generated for you! "
-        "Use this as a starting point to doodle your version and create a story. "
-        "Finish by giving your doodle an innovative caption or title and share it at the UNSW WIT booth!"
-    )
-
-    # Attach the image to the Discord message
-    with open("random_shape.png", "rb") as file:
-        await user.send(file=discord.File(file, filename="random_shape.png"))
-
-
-    # Show the generated shape (Test)
-    # img.show()  # Display the image
-    # print(f"A random {shape_type} has been generated and saved as 'random_shape.png'.")
-
-# # Generate and save the random shape (Test)
-# generate_random_shape()

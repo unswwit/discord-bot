@@ -14,10 +14,17 @@ class RandomShapeGenerate(commands.Cog):
     )
     async def send_random_object(self, inter: discord.Interaction):
 
-        await inter.response.send_message("A random shape has been generated for you! Please check your DM!")
-
         # Generate the random shape 
         await generate_random_shape(inter.user)
+
+        # Send a message with the shape directly in the same channel
+        with open("random_shape.png", "rb") as file:
+            await inter.response.send_message(
+                f"🎨 A random shape has been generated for you! "
+                "Use this as a starting point to doodle your version and create a story. "
+                "Finish by giving your doodle an innovative caption or title and share it at the UNSW WIT booth!",
+                file=discord.File(file, filename="random_shape.png")
+            )
         
 async def setup(bot: commands.Bot):
     await bot.add_cog(RandomShapeGenerate(bot))
