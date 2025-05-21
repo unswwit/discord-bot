@@ -1,22 +1,21 @@
+import discord, os
 from typing import Optional
-import discord
 from discord import app_commands
 from discord.ext import commands
+from dotenv import load_dotenv
+from pyairtable import Api # type: ignore
 
-TEAMS = [
-    "Execs", 
-    "Careers", 
-    "Competitions", 
-    "Sponsorships", 
-    "HR", 
-    "Socials", 
-    "Marketing", 
-    "Media", 
-    "Publications", 
-    "Education", 
-    "IT"
-]
+load_dotenv()
+ACCESS_TOKEN = os.getenv("AIRTABLE_TOKEN")
+BASE_ID = os.getenv("AIRTABLE_BASE_ID")
+TABLE_ID = os.getenv("AIRTABLE_TABLE_ID")
 
+api = Api(ACCESS_TOKEN)
+table = api.table(BASE_ID, TABLE_ID)
+
+records = table.all()
+
+# to have function to parse
 
 class PointsCounterCog(commands.Cog):
     def __init__(self, bot:commands.Bot):
