@@ -13,8 +13,6 @@ TABLE_ID = os.getenv("AIRTABLE_TABLE_ID")
 api = Api(ACCESS_TOKEN)
 table = api.table(BASE_ID, TABLE_ID)
 
-records = table.all()
-
 def update_points(team, points):
     try:
         rec = table.first(formula=f"({{Team}} = '{team}')")
@@ -25,6 +23,27 @@ def update_points(team, points):
         return True
     except:
         return False
+
+def display_points():
+    team_points = {}
+    for r in table.all():
+        team, points = r["fields"].values()
+        team_points[team] = int(points)
+
+    out_lines = []
+    sorted_list = sorted(team_points.items(), key=lambda x: (-x[1], x[0]))
+    for pos, i in enumerate(sorted_list, 1):
+        team, points = i
+        if pos == 1:
+            out_lines.append(f"🥇 1st - {team}: {points} points")
+        elif pos == 2:
+            out_lines.append(f"🥈 2nd - {team}: {points} points")
+        elif pos == 3:
+            out_lines.append(f"🥉 3rd - {team}: {points} points")
+        else:
+            out_lines.append(f"{pos:>4}th - {team}: {points} points")
+    
+    return out_lines
 
 
 class PointsCounterCog(commands.Cog):
@@ -72,13 +91,15 @@ class PointsCounterCog(commands.Cog):
     @counter.command(
         name="display", description="Shows all scores"
     )
-    # Manage permissions so only admin can?
     async def show_points(self, inter: discord.Interaction):
-        # Load data
-        # Sort by score descending
-        # Label top three with medal emojis 🥇🥈🥉
-        # Send response
-        pass
+        res = display_points()
+        if res:
+            await inter.response.send_message('\n'.join(res), ephemeral=True)
+        else:
+            await inter.response.send_message(
+                f"An error occurred trying to display points, please try again.",
+                ephemeral=True
+            )
 
 
 async def setup(bot: commands.Bot):
