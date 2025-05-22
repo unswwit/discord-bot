@@ -9,24 +9,27 @@ load_dotenv()
 ACCESS_TOKEN = os.getenv("AIRTABLE_TOKEN")
 BASE_ID = os.getenv("AIRTABLE_BASE_ID")
 TABLE_ID = os.getenv("AIRTABLE_TABLE_ID")
+LOG_ID = os.getenv("AIRTABLE_LOG_ID")
 
 api = Api(ACCESS_TOKEN)
-table = api.table(BASE_ID, TABLE_ID)
+points_table = api.table(BASE_ID, TABLE_ID)
+log_table = api.table(BASE_ID, LOG_ID)
+
 
 def update_points(team, points):
     try:
-        rec = table.first(formula=f"({{Team}} = '{team}')")
+        rec = points_table.first(formula=f"({{Team}} = '{team}')")
         rec_id = rec["id"]
         curr_points = rec["fields"]["Points"]
         new_points = curr_points + points
-        table.update(rec_id, {"Points": new_points})
+        points_table.update(rec_id, {"Points": new_points})
         return True
     except:
         return False
 
 def display_points():
     team_points = {}
-    for r in table.all():
+    for r in points_table.all():
         team, points = r["fields"].values()
         team_points[team] = int(points)
 
@@ -35,15 +38,36 @@ def display_points():
     for pos, i in enumerate(sorted_list, 1):
         team, points = i
         if pos == 1:
-            out_lines.append(f"🥇 1st - {team}: {points} points")
+            out_lines.append(f"🥇 1st - **{team}**: {points} points")
         elif pos == 2:
-            out_lines.append(f"🥈 2nd - {team}: {points} points")
+            out_lines.append(f"🥈 2nd - **{team}**: {points} points")
         elif pos == 3:
-            out_lines.append(f"🥉 3rd - {team}: {points} points")
+            out_lines.append(f"🥉 3rd - **{team}**: {points} points")
         else:
-            out_lines.append(f"{pos:>4}th - {team}: {points} points")
+            out_lines.append(f"{pos:>8}th - **{team}**: {points} points")
     
     return out_lines
+
+def display_log():
+    out_lines = []
+    out_lines.append("**Latest updates**\n")
+
+    sorted_log = sorted(log_table.all(), key=lambda x: x["createdTime"], reverse=True)
+    if len(sorted_log) == 0:
+        return "No updates to points yet"
+
+    for i in range(0, 10):
+        r = sorted_log[i]
+        createdTime = r["createdTime"][:10].split('-')[::-1]
+        createdTime = '-'.join(createdTime)
+        res = r["fields"].values()
+        if len(res) > 1:
+            action, desc = res
+            out_lines.append(f"{i + 1}. {action} on {createdTime} for: {desc}\n")
+        else:
+            action, = res
+            out_lines.append(f"{i + 1}. {action} on {createdTime}\n")
+    return ''.join(out_lines).strip()
 
 
 class PointsCounterCog(commands.Cog):
@@ -51,12 +75,14 @@ class PointsCounterCog(commands.Cog):
         self.bot = bot
 
     counter = app_commands.Group(
-        name="points-counter", description="A scoreboard for the 2025 Hogwarts challenges!"
+        name="points-counter", 
+        description="A scoreboard for the 2025 Hogwarts challenges!"
     )
 
     # Subcommands
     @counter.command(
-        name="add", description="Add or remove points"
+        name="add", 
+        description="Add or remove points"
     )
     @app_commands.describe(
         team="Choose a team",
@@ -69,35 +95,59 @@ class PointsCounterCog(commands.Cog):
         inter: discord.Interaction,
         team: discord.Role,
         amount: int,
-        desc: Optional[str]
+        desc: Optional[str] = None
     ):
-        # Load in data - with @role tags 
         # Adjust score in database
         team_name = team.name
-
         if update_points(team_name, amount):
             # Send response upon update success for user only
             await inter.response.send_message(
                 f"Points successfully added for {team_name}!",
                 ephemeral=True
             )
+            
+            # Make a record of the action in points log
+            action = f"+{amount} {team}"
+            log = {"Action": action}
+            if desc:
+                log["Description"] = desc
+            log_table.create(log)
         else:
             await inter.response.send_message(
                 f"An error occurred trying to update points, please try again.",
                 ephemeral=True
             )
-        # Make a record of the action [optional for later]
-
+        
     @counter.command(
         name="display", description="Shows all scores"
     )
-    async def show_points(self, inter: discord.Interaction):
+    async def show_points(
+        self, 
+        inter: discord.Interaction
+    ):
         res = display_points()
         if res:
+            # to remove ephemeral after testing
             await inter.response.send_message('\n'.join(res), ephemeral=True)
         else:
             await inter.response.send_message(
                 f"An error occurred trying to display points, please try again.",
+                ephemeral=True
+            )
+
+    @counter.command(
+        name="log", description="Shows all changes to points"
+    )
+    async def show_log(
+        self, 
+        inter: discord.Interaction
+    ):
+        res = display_log()
+        if res:
+            await inter.response.send_message(res, ephemeral=True)
+        else:
+            await inter.response.send_message(
+                f"An error occurred trying to display log, please try again.",
                 ephemeral=True
             )
 
