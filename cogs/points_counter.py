@@ -30,7 +30,10 @@ def update_points(team, points):
 def display_points():
     team_points = {}
     for r in points_table.all():
-        team, points = r["fields"].values()
+        fields = r["fields"]
+        team = fields["Team"]
+        points = int(fields.get("Points", 0))
+        # team, points = r["fields"].values()
         team_points[team] = int(points)
 
     out_lines = []
@@ -52,10 +55,13 @@ def display_log():
     out_lines = []
     out_lines.append("**Latest updates**\n")
 
-    sorted_log = sorted(log_table.all(), key=lambda x: x["createdTime"], reverse=True)
+    try:
+        sorted_log = sorted(log_table.all(), key=lambda x: x["createdTime"], reverse=True)
+    except:
+        return "An error occurred fetching the data."
     num_logs = len(sorted_log)
     if num_logs == 0:
-        return "No updates to points yet"
+        return "No updates to points yet."
 
     for i in (range(0, min(num_logs, 10))):
         r = sorted_log[i]
@@ -115,7 +121,7 @@ class PointsCounterCog(commands.Cog):
             )
             
             # Make a record of the action in points log
-            action = f"+{amount} {team}"
+            action = f"+{amount} {team_name}"
             log = {"Action": action}
             if desc:
                 log["Description"] = desc
