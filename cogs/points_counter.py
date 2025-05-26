@@ -90,7 +90,6 @@ class PointsCounterCog(commands.Cog):
         amount="Points to add (negative to subtract)",
         desc="Activity description (optional)"
     )
-    # Manage permissions so only admin can?
     async def add_points(
         self, 
         inter: discord.Interaction,
@@ -98,6 +97,14 @@ class PointsCounterCog(commands.Cog):
         amount: int,
         desc: Optional[str] = None
     ):
+        # Checking that only admin is running command
+        if not inter.user.guild_permissions.administrator:
+            await inter.response.send_message(
+                "❌ You must be an admin to add points to teams.",
+                ephemeral=True
+            ) 
+            return 
+
         # Adjust score in database
         team_name = team.name
         if update_points(team_name, amount):
