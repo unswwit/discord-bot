@@ -53,10 +53,11 @@ def display_log():
     out_lines.append("**Latest updates**\n")
 
     sorted_log = sorted(log_table.all(), key=lambda x: x["createdTime"], reverse=True)
-    if len(sorted_log) == 0:
+    num_logs = len(sorted_log)
+    if num_logs == 0:
         return "No updates to points yet"
 
-    for i in range(0, 10):
+    for i in (range(0, min(num_logs, 10))):
         r = sorted_log[i]
         createdTime = r["createdTime"][:10].split('-')[::-1]
         createdTime = '-'.join(createdTime)
