@@ -29,11 +29,15 @@ def update_points(team, points):
 
 def display_points():
     team_points = {}
-    for r in points_table.all():
+    try:
+        points_data = points_table.all()
+    except:
+        return None
+    
+    for r in points_data:
         fields = r["fields"]
         team = fields["Team"]
         points = int(fields.get("Points", 0))
-        # team, points = r["fields"].values()
         team_points[team] = int(points)
 
     out_lines = []
@@ -58,7 +62,7 @@ def display_log():
     try:
         sorted_log = sorted(log_table.all(), key=lambda x: x["createdTime"], reverse=True)
     except:
-        return "An error occurred fetching the data."
+        return None
     num_logs = len(sorted_log)
     if num_logs == 0:
         return "No updates to points yet."
@@ -97,7 +101,7 @@ class PointsCounterCog(commands.Cog):
         desc="Activity description (optional)"
     )
     async def add_points(
-        self, 
+        self,
         inter: discord.Interaction,
         team: discord.Role,
         amount: int,
@@ -141,8 +145,7 @@ class PointsCounterCog(commands.Cog):
     ):
         res = display_points()
         if res:
-            # to remove ephemeral after testing
-            await inter.response.send_message('\n'.join(res), ephemeral=True)
+            await inter.response.send_message('\n'.join(res))
         else:
             await inter.response.send_message(
                 f"An error occurred trying to display points, please try again.",
