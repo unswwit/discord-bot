@@ -27,13 +27,14 @@ def update_points(team, points):
     except:
         return False
 
+
 def display_points():
     team_points = {}
     try:
         points_data = points_table.all()
     except:
         return None
-    
+
     for r in points_data:
         fields = r["fields"]
         team = fields["Team"]
@@ -52,78 +53,76 @@ def display_points():
             out_lines.append(f"🥉 3rd - **{team}**: {points} points")
         else:
             out_lines.append(f"{pos:>8}th - **{team}**: {points} points")
-    
+
     return out_lines
+
 
 def display_log():
     out_lines = []
     out_lines.append("**Latest updates**\n")
 
     try:
-        sorted_log = sorted(log_table.all(), key=lambda x: x["createdTime"], reverse=True)
+        sorted_log = sorted(
+            log_table.all(), key=lambda x: x["createdTime"], reverse=True
+        )
     except:
         return None
     num_logs = len(sorted_log)
     if num_logs == 0:
         return "No updates to points yet."
 
-    for i in (range(0, min(num_logs, 10))):
+    for i in range(0, min(num_logs, 10)):
         r = sorted_log[i]
-        createdTime = r["createdTime"][:10].split('-')[::-1]
-        createdTime = '-'.join(createdTime)
+        createdTime = r["createdTime"][:10].split("-")[::-1]
+        createdTime = "-".join(createdTime)
         res = r["fields"].values()
         if len(res) > 1:
             action, desc = res
             out_lines.append(f"{i + 1}. {action} on {createdTime} for: {desc}\n")
         else:
-            action, = res
+            (action,) = res
             out_lines.append(f"{i + 1}. {action} on {createdTime}\n")
-    return ''.join(out_lines).strip()
+    return "".join(out_lines).strip()
 
 
 class PointsCounterCog(commands.Cog):
-    def __init__(self, bot:commands.Bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     counter = app_commands.Group(
-        name="points-counter", 
-        description="A scoreboard for the 2025 Hogwarts challenges!"
+        name="points-counter",
+        description="A scoreboard for the 2025 Hogwarts challenges!",
     )
 
     # Subcommands
-    @counter.command(
-        name="add", 
-        description="Add or remove points"
-    )
+    @counter.command(name="add", description="Add or remove points")
     @app_commands.describe(
         team="Choose a team",
         amount="Points to add (negative to subtract)",
-        desc="Activity description (optional)"
+        desc="Activity description (optional)",
     )
     async def add_points(
         self,
         inter: discord.Interaction,
         team: discord.Role,
         amount: int,
-        desc: Optional[str] = None
+        desc: Optional[str] = None,
     ):
         # Checking that only admin is running command
         if not inter.user.guild_permissions.administrator:
             await inter.response.send_message(
-                "❌ You must be an admin to add points to teams.",
-                ephemeral=True
-            ) 
-            return 
+                "❌ You must be an admin to add points to teams.", ephemeral=True
+            )
+            return
 
         # Adjust score in database
         team_name = team.name
         if update_points(team_name, amount):
             # Send response upon update success for user only
             await inter.response.send_message(
-                f"Points successfully added for {team_name}!",
-                ephemeral=True
+                f"Points successfully added for {team_name}!", ephemeral=True
             )
-            
+
             # Make a record of the action in points log
             action = f"+{amount} {team_name}"
             log = {"Action": action}
@@ -133,39 +132,29 @@ class PointsCounterCog(commands.Cog):
         else:
             await inter.response.send_message(
                 f"An error occurred trying to update points, please try again.",
-                ephemeral=True
+                ephemeral=True,
             )
-        
-    @counter.command(
-        name="display", description="Shows all scores"
-    )
-    async def show_points(
-        self, 
-        inter: discord.Interaction
-    ):
+
+    @counter.command(name="display", description="Shows all scores")
+    async def show_points(self, inter: discord.Interaction):
         res = display_points()
         if res:
-            await inter.response.send_message('\n'.join(res))
+            await inter.response.send_message("\n".join(res))
         else:
             await inter.response.send_message(
                 f"An error occurred trying to display points, please try again.",
-                ephemeral=True
+                ephemeral=True,
             )
 
-    @counter.command(
-        name="log", description="Shows all changes to points"
-    )
-    async def show_log(
-        self, 
-        inter: discord.Interaction
-    ):
+    @counter.command(name="log", description="Shows all changes to points")
+    async def show_log(self, inter: discord.Interaction):
         res = display_log()
         if res:
             await inter.response.send_message(res, ephemeral=True)
         else:
             await inter.response.send_message(
                 f"An error occurred trying to display log, please try again.",
-                ephemeral=True
+                ephemeral=True,
             )
 
 
