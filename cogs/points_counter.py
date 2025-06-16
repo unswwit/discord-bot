@@ -108,10 +108,10 @@ class PointsCounterCog(commands.Cog):
         amount: int,
         desc: Optional[str] = None,
     ):
-        # Checking that only admin is running command
-        if not inter.user.guild_permissions.administrator:
+        # Checking that only an Exec is running command
+        if "Execs" not in [r.name for r in inter.user.roles]:
             await inter.response.send_message(
-                "❌ You must be an admin to add points to teams.", ephemeral=True
+                "❌ You must be an Exec to add points to teams.", ephemeral=True
             )
             return
 
