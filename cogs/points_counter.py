@@ -97,7 +97,7 @@ class PointsCounterCog(commands.Cog):
     # Subcommands
     @counter.command(name="add", description="Add or remove points")
     @app_commands.describe(
-        team="Choose a team",
+        team="Choose a team (Team 1-10)",
         amount="Points to add (negative to subtract)",
         desc="Activity description (optional)",
     )
