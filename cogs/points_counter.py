@@ -108,10 +108,11 @@ class PointsCounterCog(commands.Cog):
         amount: int,
         desc: Optional[str] = None,
     ):
-        # Checking that only an Exec is running command
-        if "Execs" not in [r.name for r in inter.user.roles]:
+        # Checking that only an Exec or HR Director is running command
+        role_names = [r.name for r in inter.user.roles]
+        if "Execs" not in role_names and "HR Directors" not in role_names:
             await inter.response.send_message(
-                "❌ You must be an Exec to add points to teams.", ephemeral=True
+                "❌ You must be an Exec or HR Director to add points to teams.", ephemeral=True
             )
             return
 
