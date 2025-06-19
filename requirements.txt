@@ -15,7 +15,7 @@ cogwatch==3.1.0
 random-topic==0.1.2
 html5lib==1.1
 bs4==0.0.2
-tzdata==2024.2
+tzdata==2025.2
 pyopentdb==0.0.4
 wonderwords==2.2.0
 Pillow==10.0.1
