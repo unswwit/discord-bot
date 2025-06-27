@@ -18,5 +18,5 @@ bs4==0.0.2
 tzdata==2025.2
 pyopentdb==0.0.4
 wonderwords==2.2.0
-Pillow==10.4.0
+Pillow==11.2.1
 pyairtable==3.1.1
