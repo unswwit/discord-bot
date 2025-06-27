@@ -2,7 +2,7 @@ aiohttp==3.12.13
 aiosignal==1.3.2
 async-timeout==5.0.1
 attrs==23.2.0
-black==24.10.0
+black==25.1.0
 charset-normalizer==3.4.2
 discord.py==2.5.2
 frozenlist==1.7.0
@@ -15,8 +15,8 @@ cogwatch==3.1.0
 random-topic==0.1.2
 html5lib==1.1
 bs4==0.0.2
-tzdata==2024.2
+tzdata==2025.2
 pyopentdb==0.0.4
 wonderwords==2.2.0
-Pillow==10.4.0
+Pillow==11.2.1
 pyairtable==3.1.1
