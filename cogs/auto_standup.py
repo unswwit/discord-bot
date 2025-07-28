@@ -21,7 +21,10 @@ class AutoStandups(commands.Cog):
         self.msg = "@Information Technology (IT) reminder to post standups ⭐"
         self.weekly_reminder = None
 
-    @app_commands.command(name="set-standup", description="Set auto-standups in current channel or change details of current ones")
+    @app_commands.command(
+        name="set-standup",
+        description="Set auto-standups in current channel or change details of current ones",
+    )
     @app_commands.describe(
         day="Choose a day to set a standup reminder",
         hour="Choose the hour [1-12]",
@@ -41,7 +44,7 @@ class AutoStandups(commands.Cog):
         suffix=[
             app_commands.Choice(name="AM", value="AM"),
             app_commands.Choice(name="PM", value="PM"),
-        ]
+        ],
     )
     async def set_standup(
         self,
@@ -69,9 +72,15 @@ class AutoStandups(commands.Cog):
         # Ensuring only one reminder is active
         if self.weekly_reminder is None or self.weekly_reminder.done():
             self.weekly_reminder = self.bot.loop.create_task(self.send_weekly_message())
-            await inter.response.send_message(f"Auto-standup successfully set for {day.name} at {self.hour}:00 {suffix.name}\nMessage: {self.msg}", ephemeral=True)
+            await inter.response.send_message(
+                f"Auto-standup successfully set for {day.name} at {self.hour}:00 {suffix.name}\nMessage: {self.msg}",
+                ephemeral=True,
+            )
         else:
-            await inter.response.send_message(f"There is currently an active auto-standup for {day.name} at {self.hour}:00 {suffix.name}\nMessage: {self.msg}", ephemeral=True)
+            await inter.response.send_message(
+                f"There is currently an active auto-standup for {day.name} at {self.hour}:00 {suffix.name}\nMessage: {self.msg}",
+                ephemeral=True,
+            )
 
         return
 
@@ -101,16 +110,19 @@ class AutoStandups(commands.Cog):
         except asyncio.CancelledError:
             return
 
-    @app_commands.command(name="stop-standup", description="Cancel the current standup reminders")
-    async def stop_standup(
-        self,
-        inter: discord.Interaction
-    ):
+    @app_commands.command(
+        name="stop-standup", description="Cancel the current standup reminders"
+    )
+    async def stop_standup(self, inter: discord.Interaction):
         if self.weekly_reminder and not self.weekly_reminder.done():
             self.weekly_reminder.cancel()
-            await inter.response.send_message("🚫 The current standup reminders have been cancelled.", ephemeral=True)
+            await inter.response.send_message(
+                "🚫 The current standup reminders have been cancelled.", ephemeral=True
+            )
         else:
-            await inter.response.send_message("❗There are currently no standup reminders.", ephemeral=True)
+            await inter.response.send_message(
+                "❗There are currently no standup reminders.", ephemeral=True
+            )
 
 
 async def setup(bot: commands.Bot):
