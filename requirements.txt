@@ -1,13 +1,13 @@
-aiohttp==3.12.14
+aiohttp==3.12.15
 aiosignal==1.4.0
 async-timeout==5.0.1
 attrs==25.3.0
 black==25.1.0
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
 discord.py==2.5.2
 frozenlist==1.7.0
 idna==3.10
-multidict==6.6.3
+multidict==6.6.4
 yarl==1.20.1
 contentful==2.4.0
 python-dotenv==1.1.1
