@@ -18,7 +18,7 @@ class AutoStandups(commands.Cog):
         self.day = 4  # Friday by default
         self.hour = 10  # 10AM by default
         self.suffix = "AM"
-        self.msg = "@Information Technology (IT) reminder to post standups ⭐"
+        self.msg = "Friendly reminder to post standups ⭐"
         self.weekly_reminder = None
 
     @app_commands.command(
